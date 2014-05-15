@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <EditTextPreference
+        android:key="@string/prefs_login_mail"
+        android:title="@string/login_mail"
+        android:defaultValue=""
+        android:inputType="textNoSuggestions"
+        />
+    <EditTextPreference
+            android:key="@string/prefs_login_pass"
+            android:title="@string/login_pass"
+            android:defaultValue=""
+            android:inputType="textPassword"
+            />
+</PreferenceScreen>

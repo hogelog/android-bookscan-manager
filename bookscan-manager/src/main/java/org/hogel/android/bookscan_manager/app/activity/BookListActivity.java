@@ -1,9 +1,15 @@
-package org.hogel.android.bookscan_manager.app;
+package org.hogel.android.bookscan_manager.app.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import org.hogel.android.bookscan_manager.app.R;
+import org.hogel.android.bookscan_manager.app.bookscan.BookscanClient;
+import roboguice.activity.RoboFragmentActivity;
 
+import javax.inject.Inject;
 
 
 /**
@@ -22,13 +28,36 @@ import android.support.v4.app.FragmentActivity;
  * {@link BookListFragment.Callbacks} interface
  * to listen for item selections.
  */
-public class BookListActivity extends FragmentActivity
+public class BookListActivity extends RoboFragmentActivity
         implements BookListFragment.Callbacks {
+
+    @Inject
+    BookscanClient bookscanClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_book_list);
+
+        bookscanClient.login();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater menuInflater = getMenuInflater();
+        menuInflater.inflate(R.menu.actions_book_list, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_pref:
+                startActivity(new Intent(this, BookscanPreferenceActivity.class));
+                return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     /**

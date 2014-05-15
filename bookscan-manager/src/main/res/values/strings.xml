@@ -4,4 +4,12 @@
     <string name="app_name">bookscan-manager</string>
     <string name="title_book_detail">Book Detail</string>
 
+    <string name="prefs_login_mail">prefs_login_mail</string>
+    <string name="prefs_login_pass">prefs_login_pass</string>
+
+    <string name="login_mail">メールアドレス</string>
+    <string name="login_pass">パスワード</string>
+    
+    <string name="action_pref">設定</string>
+
 </resources>

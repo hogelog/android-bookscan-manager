@@ -1,4 +1,4 @@
-package org.hogel.android.bookscan_manager.app;
+package org.hogel.android.bookscan_manager.app.activity;
 
 import android.app.Activity;
 import android.os.Bundle;
