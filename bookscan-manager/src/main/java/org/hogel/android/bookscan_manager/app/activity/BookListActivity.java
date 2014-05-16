@@ -2,6 +2,7 @@ package org.hogel.android.bookscan_manager.app.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -32,7 +33,12 @@ public class BookListActivity extends RoboFragmentActivity
         implements BookListFragment.Callbacks {
 
     @Inject
-    BookscanClient bookscanClient;
+    private BookscanClient bookscanClient;
+
+    @Inject
+    private FragmentManager fragmentManager;
+    @Inject
+    private LoginDialogFragment loginDialogFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,7 +59,7 @@ public class BookListActivity extends RoboFragmentActivity
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_pref:
-                startActivity(new Intent(this, BookscanPreferenceActivity.class));
+                loginDialogFragment.show(fragmentManager, "hoge");
                 return true;
         }
 
