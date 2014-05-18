@@ -6,8 +6,12 @@ import android.support.v4.app.FragmentManager;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.Window;
+import android.widget.Toast;
 import org.hogel.android.bookscan_manager.app.R;
 import org.hogel.android.bookscan_manager.app.bookscan.BookscanClient;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import roboguice.activity.RoboFragmentActivity;
 
 import javax.inject.Inject;
@@ -31,6 +35,7 @@ import javax.inject.Inject;
  */
 public class BookListActivity extends RoboFragmentActivity
         implements BookListFragment.Callbacks {
+    private static final Logger LOG = LoggerFactory.getLogger(BookListActivity.class);
 
     @Inject
     private BookscanClient bookscanClient;
@@ -43,6 +48,9 @@ public class BookListActivity extends RoboFragmentActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+
         setContentView(R.layout.activity_book_list);
 
         bookscanClient.login();
@@ -59,7 +67,7 @@ public class BookListActivity extends RoboFragmentActivity
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_pref:
-                loginDialogFragment.show(fragmentManager, "hoge");
+                loginDialogFragment.show(fragmentManager, "login");
                 return true;
         }
 

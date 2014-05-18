@@ -11,6 +11,14 @@
     <string name="login_pass">パスワード</string>
 
     <string name="action_login">ログイン</string>
+
+    <string name="action_login_success">ログインしました</string>
+    <string name="action_login_fail">ログイン失敗</string>
+
     <string name="login_title">BOOKSCANログイン</string>
+
+    <string name="url_login">https://system.bookscan.co.jp/login.php</string>
+    <string name="url_cookie">.bookscan.co.jp</string>
+    <string name="error_network">ネットワークエラー</string>
 
 </resources>

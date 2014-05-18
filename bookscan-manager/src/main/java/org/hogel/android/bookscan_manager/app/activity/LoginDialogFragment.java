@@ -7,8 +7,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 import org.hogel.android.bookscan_manager.app.R;
 import org.hogel.android.bookscan_manager.app.bookscan.BookscanClient;
+import org.hogel.android.bookscan_manager.app.bookscan.exception.BookscanNetworkException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import roboguice.fragment.RoboDialogFragment;
 import roboguice.inject.InjectResource;
 import roboguice.inject.InjectView;
@@ -16,6 +20,8 @@ import roboguice.inject.InjectView;
 import javax.inject.Inject;
 
 public class LoginDialogFragment extends RoboDialogFragment implements View.OnClickListener {
+    private static final Logger LOG = LoggerFactory.getLogger(LoginDialogFragment.class);
+
     @Inject
     private SharedPreferences preferences;
     @InjectResource(R.string.prefs_login_mail)
