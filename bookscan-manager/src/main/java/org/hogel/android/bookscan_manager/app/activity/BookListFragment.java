@@ -1,14 +1,20 @@
 package org.hogel.android.bookscan_manager.app.activity;
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
-import android.support.v4.app.ListFragment;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 
-import org.hogel.android.bookscan_manager.app.dummy.DummyContent;
+import com.google.common.collect.Lists;
+import org.hogel.android.bookscan_manager.app.bookscan.BookscanClient;
+import org.hogel.android.bookscan_manager.app.bookscan.model.Book;
+import roboguice.fragment.RoboListFragment;
+
+import javax.inject.Inject;
+import java.util.List;
 
 /**
  * A list fragment representing a list of Books. This fragment
@@ -19,7 +25,15 @@ import org.hogel.android.bookscan_manager.app.dummy.DummyContent;
  * Activities containing this fragment MUST implement the {@link Callbacks}
  * interface.
  */
-public class BookListFragment extends ListFragment {
+public class BookListFragment extends RoboListFragment {
+
+    @Inject
+    private Context context;
+
+    @Inject
+    private BookscanClient bookscanClient;
+
+    private final List<Book> books = Lists.newArrayList();
 
     /**
      * The serialization (saved instance state) Bundle key representing the
@@ -56,7 +70,7 @@ public class BookListFragment extends ListFragment {
      */
     private static Callbacks sDummyCallbacks = new Callbacks() {
         @Override
-        public void onItemSelected(String id) {
+        public void onItemSelected(String hash) {
         }
     };
 
@@ -71,12 +85,15 @@ public class BookListFragment extends ListFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // TODO: replace with a real list adapter.
-        setListAdapter(new ArrayAdapter<DummyContent.DummyItem>(
-                getActivity(),
-                android.R.layout.simple_list_item_activated_1,
-                android.R.id.text1,
-                DummyContent.ITEMS));
+        if (bookscanClient.isLogin()) {
+            books.addAll(bookscanClient.fetchBookList());
+        }
+
+        setListAdapter(new ArrayAdapter<Book>(
+            context,
+            android.R.layout.simple_list_item_activated_1,
+            android.R.id.text1,
+            books));
     }
 
     @Override
@@ -114,9 +131,7 @@ public class BookListFragment extends ListFragment {
     public void onListItemClick(ListView listView, View view, int position, long id) {
         super.onListItemClick(listView, view, position, id);
 
-        // Notify the active callbacks interface (the activity, if the
-        // fragment is attached to one) that an item has been selected.
-        mCallbacks.onItemSelected(DummyContent.ITEMS.get(position).id);
+        mCallbacks.onItemSelected(books.get(position).getHash());
     }
 
     @Override

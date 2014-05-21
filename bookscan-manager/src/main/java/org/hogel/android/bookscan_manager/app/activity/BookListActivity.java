@@ -7,7 +7,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.Window;
-import android.widget.Toast;
 import org.hogel.android.bookscan_manager.app.R;
 import org.hogel.android.bookscan_manager.app.bookscan.BookscanClient;
 import org.slf4j.Logger;
@@ -51,9 +50,9 @@ public class BookListActivity extends RoboFragmentActivity
 
         requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 
-        setContentView(R.layout.activity_book_list);
-
         bookscanClient.login();
+
+        setContentView(R.layout.activity_book_list);
     }
 
     @Override
@@ -66,7 +65,7 @@ public class BookListActivity extends RoboFragmentActivity
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.action_pref:
+            case R.id.action_login:
                 loginDialogFragment.show(fragmentManager, "login");
                 return true;
         }
@@ -83,5 +82,10 @@ public class BookListActivity extends RoboFragmentActivity
         Intent detailIntent = new Intent(this, BookDetailActivity.class);
         detailIntent.putExtra(BookDetailFragment.ARG_ITEM_ID, id);
         startActivity(detailIntent);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
     }
 }

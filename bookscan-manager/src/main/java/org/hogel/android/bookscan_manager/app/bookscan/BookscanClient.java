@@ -3,15 +3,20 @@ package org.hogel.android.bookscan_manager.app.bookscan;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.v4.app.FragmentManager;
 import android.widget.Toast;
 import com.google.common.base.Optional;
+import com.google.common.collect.Lists;
 import org.hogel.android.bookscan_manager.app.R;
 import org.hogel.android.bookscan_manager.app.activity.LoginDialogFragment;
+import org.hogel.android.bookscan_manager.app.bookscan.model.Book;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import roboguice.inject.InjectResource;
@@ -19,6 +24,7 @@ import roboguice.util.Strings;
 
 import javax.inject.Inject;
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
@@ -61,9 +67,9 @@ public class BookscanClient {
     }
 
     private void _login(String loginMail, String loginPass) {
-            Connection connection = connect(R.string.url_login)
-                .method(Connection.Method.POST)
-                .data("email", loginMail, "password", loginPass);
+        Connection connection = connect(R.string.url_login)
+            .method(Connection.Method.POST)
+            .data("email", loginMail, "password", loginPass);
         Optional<Document> result = execute(connection);
         if (result.isPresent()) {
             Toast.makeText(context, R.string.action_login_success, Toast.LENGTH_SHORT).show();
@@ -72,12 +78,35 @@ public class BookscanClient {
         }
     }
 
+    public List<Book> fetchBookList() {
+        final List<Book> books = Lists.newArrayList();
+        Connection connection = connect(R.string.url_book_list).method(Connection.Method.GET);
+        Optional<Document> result = execute(connection);
+
+        if (!result.isPresent()) {
+            return books;
+        }
+
+        Document document = result.get();
+        Elements bookLinks = document.select("#sortable_box > div > a");
+        for (Element bookLink : bookLinks) {
+            String href = bookLink.attr("href");
+            Uri bookUri = Uri.parse(href);
+            String hash = bookUri.getQueryParameter("h");
+            String digest = bookUri.getQueryParameter("d");
+            String filename = bookUri.getQueryParameter("f");
+            final Book book = new Book(hash, digest, filename);
+            books.add(book);
+        }
+        return books;
+    }
+
     public Connection connect(int urlId) {
         String url = context.getString(urlId);
         return Jsoup.connect(url).cookies(cookieManager.getCookies());
     }
 
-    public Optional<Document> execute(final Connection connection) {
+    public Optional<Document> execute(Connection connection) {
         AsyncTask<Connection, Void, Optional<Document>> task = new AsyncTask<Connection, Void, Optional<Document>>() {
             @Override
             protected Optional<Document> doInBackground(Connection... connections) {
@@ -87,8 +116,8 @@ public class BookscanClient {
                     Map<String, String> cookies = response.cookies();
                     if (cookies.size() > 0) {
                         cookieManager.putAll(cookies);
-                        return Optional.of(document);
                     }
+                    return Optional.of(document);
                 } catch (IOException e) {
                     LOG.error(e.getMessage(), e);
                     Toast.makeText(context, R.string.error_network, Toast.LENGTH_LONG).show();
@@ -127,5 +156,9 @@ public class BookscanClient {
 
     private boolean hasLoginPass() {
         return Strings.notEmpty(preferences.getString(prefsLoginPass, ""));
+    }
+
+    public boolean isLogin() {
+        return cookieManager.getCookies().size() > 0;
     }
 }

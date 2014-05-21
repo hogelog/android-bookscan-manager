@@ -17,8 +17,10 @@
 
     <string name="login_title">BOOKSCANログイン</string>
 
-    <string name="url_login">https://system.bookscan.co.jp/login.php</string>
-    <string name="url_cookie">.bookscan.co.jp</string>
     <string name="error_network">ネットワークエラー</string>
+
+    <string name="url_cookie">.bookscan.co.jp</string>
+    <string name="url_login">https://system.bookscan.co.jp/login.php</string>
+    <string name="url_book_list">https://system.bookscan.co.jp/bookshelf_all_cover.php</string>
 
 </resources>
