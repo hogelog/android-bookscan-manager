@@ -2,18 +2,11 @@ package org.hogel.android.bookscan_manager.app.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.FragmentManager;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.Window;
 import org.hogel.android.bookscan_manager.app.R;
-import org.hogel.android.bookscan_manager.app.bookscan.BookscanClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import roboguice.activity.RoboFragmentActivity;
-
-import javax.inject.Inject;
 
 
 /**
@@ -35,9 +28,6 @@ import javax.inject.Inject;
 public class BookListActivity extends RoboFragmentActivity
         implements BookListFragment.Callbacks {
     private static final Logger LOG = LoggerFactory.getLogger(BookListActivity.class);
-
-    @Inject
-    private BookscanClient bookscanClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

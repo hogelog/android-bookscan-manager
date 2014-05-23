@@ -1,20 +1,17 @@
 package org.hogel.android.bookscan_manager.app.activity;
 
-import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Context;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
-import android.view.*;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-
-
 import com.google.common.collect.Lists;
 import com.google.inject.Injector;
-import com.j256.ormlite.android.apptools.OpenHelperManager;
-import com.j256.ormlite.android.apptools.OrmLiteBaseActivity;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.table.TableUtils;
 import org.hogel.android.bookscan_manager.app.R;
@@ -122,7 +119,7 @@ public class BookListFragment extends RoboListFragment {
             LOG.error(e.getMessage(), e);
         }
 
-        booksAdapter = new ArrayAdapter<Book>(
+        booksAdapter = new ArrayAdapter<>(
             context,
             android.R.layout.simple_list_item_activated_1,
             android.R.id.text1,

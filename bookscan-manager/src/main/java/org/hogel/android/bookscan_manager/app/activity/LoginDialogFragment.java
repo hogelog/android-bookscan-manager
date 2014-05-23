@@ -7,10 +7,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 import org.hogel.android.bookscan_manager.app.R;
 import org.hogel.android.bookscan_manager.app.bookscan.BookscanClient;
-import org.hogel.android.bookscan_manager.app.bookscan.exception.BookscanNetworkException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import roboguice.fragment.RoboDialogFragment;
@@ -42,8 +40,7 @@ public class LoginDialogFragment extends RoboDialogFragment implements View.OnCl
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         getDialog().setTitle(R.string.login_title);
-        View view = inflater.inflate(R.layout.fragment_login_dialog, container);
-        return view;
+        return inflater.inflate(R.layout.fragment_login_dialog, container);
     }
 
     @Override

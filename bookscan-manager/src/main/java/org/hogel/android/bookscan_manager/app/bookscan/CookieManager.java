@@ -6,7 +6,6 @@ import com.google.common.collect.Maps;
 import lombok.Getter;
 import net.arnx.jsonic.JSON;
 import org.hogel.android.bookscan_manager.app.R;
-import roboguice.inject.InjectResource;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -27,7 +26,7 @@ public class CookieManager {
         this.preferences = preferences;
         prefsCookies = context.getString(R.string.prefs_cookies);
         String jsonCookies = preferences.getString(prefsCookies, "{}");
-        cookies.clear();;
+        cookies.clear();
         cookies.putAll((Map<? extends String, ? extends String>) JSON.decode(jsonCookies));
     }
 
