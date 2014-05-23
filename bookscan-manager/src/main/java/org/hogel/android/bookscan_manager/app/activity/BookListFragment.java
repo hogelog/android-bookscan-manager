@@ -1,19 +1,33 @@
 package org.hogel.android.bookscan_manager.app.activity;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-import android.view.View;
+import android.support.v4.app.FragmentManager;
+import android.view.*;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 
 import com.google.common.collect.Lists;
+import com.google.inject.Injector;
+import com.j256.ormlite.android.apptools.OpenHelperManager;
+import com.j256.ormlite.android.apptools.OrmLiteBaseActivity;
+import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.table.TableUtils;
+import org.hogel.android.bookscan_manager.app.R;
 import org.hogel.android.bookscan_manager.app.bookscan.BookscanClient;
+import org.hogel.android.bookscan_manager.app.bookscan.CookieManager;
 import org.hogel.android.bookscan_manager.app.bookscan.model.Book;
+import org.hogel.android.bookscan_manager.app.dao.DatabaseHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import roboguice.fragment.RoboListFragment;
 
 import javax.inject.Inject;
+import java.sql.SQLException;
 import java.util.List;
 
 /**
@@ -26,14 +40,32 @@ import java.util.List;
  * interface.
  */
 public class BookListFragment extends RoboListFragment {
+    private static final Logger LOG = LoggerFactory.getLogger(DatabaseHelper.class);
 
     @Inject
     private Context context;
 
     @Inject
     private BookscanClient bookscanClient;
+    @Inject
+    private CookieManager cookieManager;
+
+    @Inject
+    private FragmentManager fragmentManager;
+    @Inject
+    private LoginDialogFragment loginDialogFragment;
+
+    @Inject
+    private Injector injector;
+
+    @Inject
+    private DatabaseHelper databaseHelper;
+
+    private Dao<Book, String> bookDao;
 
     private final List<Book> books = Lists.newArrayList();
+
+    private ArrayAdapter<Book> booksAdapter;
 
     /**
      * The serialization (saved instance state) Bundle key representing the
@@ -74,10 +106,6 @@ public class BookListFragment extends RoboListFragment {
         }
     };
 
-    /**
-     * Mandatory empty constructor for the fragment manager to instantiate the
-     * fragment (e.g. upon screen orientation changes).
-     */
     public BookListFragment() {
     }
 
@@ -85,15 +113,23 @@ public class BookListFragment extends RoboListFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (bookscanClient.isLogin()) {
-            books.addAll(bookscanClient.fetchBookList());
+        databaseHelper.getWritableDatabase();
+        bookDao = databaseHelper.getBookDao();
+
+        try {
+            books.addAll(bookDao.queryForAll());
+        } catch (SQLException e) {
+            LOG.error(e.getMessage(), e);
         }
 
-        setListAdapter(new ArrayAdapter<Book>(
+        booksAdapter = new ArrayAdapter<Book>(
             context,
             android.R.layout.simple_list_item_activated_1,
             android.R.id.text1,
-            books));
+            books);
+        setListAdapter(booksAdapter);
+
+        setHasOptionsMenu(true);
     }
 
     @Override
@@ -163,5 +199,43 @@ public class BookListFragment extends RoboListFragment {
         }
 
         mActivatedPosition = position;
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater menuInflater) {
+        menuInflater.inflate(R.menu.actions_book_list, menu);
+        super.onCreateOptionsMenu(menu, menuInflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_login:
+                loginDialogFragment.show(fragmentManager, "login");
+                return true;
+            case R.id.action_sync:
+                if (!bookscanClient.isLogin()) {
+                    bookscanClient.login();
+                }
+                syncBookList();
+                return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void syncBookList() {
+        List<Book> fetchBooks = bookscanClient.fetchBookList();
+        try {
+            TableUtils.clearTable(databaseHelper.getConnectionSource(), Book.class);
+            for (Book book : fetchBooks) {
+                bookDao.create(book);
+            }
+        } catch (SQLException e) {
+            LOG.error(e.getMessage(), e);
+        }
+        books.clear();
+        books.addAll(fetchBooks);
+        booksAdapter.notifyDataSetChanged();
     }
 }

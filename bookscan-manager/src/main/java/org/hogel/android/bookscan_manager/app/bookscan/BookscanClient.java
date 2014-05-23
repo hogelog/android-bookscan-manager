@@ -92,10 +92,10 @@ public class BookscanClient {
         for (Element bookLink : bookLinks) {
             String href = bookLink.attr("href");
             Uri bookUri = Uri.parse(href);
-            String hash = bookUri.getQueryParameter("h");
             String digest = bookUri.getQueryParameter("d");
+            String hash = bookUri.getQueryParameter("h");
             String filename = bookUri.getQueryParameter("f");
-            final Book book = new Book(hash, digest, filename);
+            final Book book = new Book(filename, hash, digest);
             books.add(book);
         }
         return books;

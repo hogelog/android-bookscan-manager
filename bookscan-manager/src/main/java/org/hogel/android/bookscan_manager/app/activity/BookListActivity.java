@@ -39,38 +39,13 @@ public class BookListActivity extends RoboFragmentActivity
     @Inject
     private BookscanClient bookscanClient;
 
-    @Inject
-    private FragmentManager fragmentManager;
-    @Inject
-    private LoginDialogFragment loginDialogFragment;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 
-        bookscanClient.login();
-
         setContentView(R.layout.activity_book_list);
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater menuInflater = getMenuInflater();
-        menuInflater.inflate(R.menu.actions_book_list, menu);
-        return super.onCreateOptionsMenu(menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_login:
-                loginDialogFragment.show(fragmentManager, "login");
-                return true;
-        }
-
-        return super.onOptionsItemSelected(item);
     }
 
     /**

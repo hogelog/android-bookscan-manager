@@ -6,11 +6,13 @@
 
     <string name="prefs_login_mail">prefs_login_mail</string>
     <string name="prefs_login_pass">prefs_login_pass</string>
+    <string name="prefs_cookies">prefs_cookies</string>
 
     <string name="login_mail">メールアドレス</string>
     <string name="login_pass">パスワード</string>
 
     <string name="action_login">ログイン</string>
+    <string name="action_sync">更新</string>
 
     <string name="action_login_success">ログインしました</string>
     <string name="action_login_fail">ログイン失敗</string>
