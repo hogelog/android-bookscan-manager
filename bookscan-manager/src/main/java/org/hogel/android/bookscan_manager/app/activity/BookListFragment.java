@@ -63,10 +63,6 @@ public class BookListFragment extends RoboListFragment {
      */
     private static final String STATE_ACTIVATED_POSITION = "activated_position";
 
-    /**
-     * The fragment's current callback object, which is notified of list item
-     * clicks.
-     */
     private Callbacks mCallbacks = sDummyCallbacks;
 
     /**
@@ -74,22 +70,10 @@ public class BookListFragment extends RoboListFragment {
      */
     private int mActivatedPosition = ListView.INVALID_POSITION;
 
-    /**
-     * A callback interface that all activities containing this fragment must
-     * implement. This mechanism allows activities to be notified of item
-     * selections.
-     */
     public interface Callbacks {
-        /**
-         * Callback for when an item has been selected.
-         */
         public void onItemSelected(String id);
     }
 
-    /**
-     * A dummy implementation of the {@link Callbacks} interface that does
-     * nothing. Used only when this fragment is not attached to an activity.
-     */
     private static Callbacks sDummyCallbacks = new Callbacks() {
         @Override
         public void onItemSelected(String id) {

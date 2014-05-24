@@ -19,4 +19,9 @@ public class Book {
 
     @DatabaseField
     private String digest;
+
+    @Override
+    public String toString() {
+        return filename;
+    }
 }
