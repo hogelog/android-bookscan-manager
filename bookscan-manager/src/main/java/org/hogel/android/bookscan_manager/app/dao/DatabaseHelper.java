@@ -12,8 +12,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 import java.sql.SQLException;
 
+@Singleton
 public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
     private static final Logger LOG = LoggerFactory.getLogger(DatabaseHelper.class);
 
@@ -26,6 +28,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
     @Inject
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
+        getWritableDatabase();
     }
 
     @Override

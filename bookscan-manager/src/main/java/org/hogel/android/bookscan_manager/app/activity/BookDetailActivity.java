@@ -2,10 +2,10 @@ package org.hogel.android.bookscan_manager.app.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.NavUtils;
 import android.view.MenuItem;
 import org.hogel.android.bookscan_manager.app.R;
+import roboguice.activity.RoboFragmentActivity;
 
 
 /**
@@ -17,7 +17,7 @@ import org.hogel.android.bookscan_manager.app.R;
  * This activity is mostly just a 'shell' activity containing nothing
  * more than a {@link BookDetailFragment}.
  */
-public class BookDetailActivity extends FragmentActivity {
+public class BookDetailActivity extends RoboFragmentActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -11,12 +11,10 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import com.google.common.collect.Lists;
-import com.google.inject.Injector;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.table.TableUtils;
 import org.hogel.android.bookscan_manager.app.R;
 import org.hogel.android.bookscan_manager.app.bookscan.BookscanClient;
-import org.hogel.android.bookscan_manager.app.bookscan.CookieManager;
 import org.hogel.android.bookscan_manager.app.bookscan.model.Book;
 import org.hogel.android.bookscan_manager.app.dao.DatabaseHelper;
 import org.slf4j.Logger;
@@ -37,23 +35,18 @@ import java.util.List;
  * interface.
  */
 public class BookListFragment extends RoboListFragment {
-    private static final Logger LOG = LoggerFactory.getLogger(DatabaseHelper.class);
+    private static final Logger LOG = LoggerFactory.getLogger(BookListFragment.class);
 
     @Inject
     private Context context;
 
     @Inject
     private BookscanClient bookscanClient;
-    @Inject
-    private CookieManager cookieManager;
 
     @Inject
     private FragmentManager fragmentManager;
     @Inject
     private LoginDialogFragment loginDialogFragment;
-
-    @Inject
-    private Injector injector;
 
     @Inject
     private DatabaseHelper databaseHelper;
@@ -99,7 +92,7 @@ public class BookListFragment extends RoboListFragment {
      */
     private static Callbacks sDummyCallbacks = new Callbacks() {
         @Override
-        public void onItemSelected(String hash) {
+        public void onItemSelected(String id) {
         }
     };
 
@@ -110,7 +103,6 @@ public class BookListFragment extends RoboListFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        databaseHelper.getWritableDatabase();
         bookDao = databaseHelper.getBookDao();
 
         try {
@@ -156,7 +148,6 @@ public class BookListFragment extends RoboListFragment {
     public void onDetach() {
         super.onDetach();
 
-        // Reset the active callbacks interface to the dummy implementation.
         mCallbacks = sDummyCallbacks;
     }
 
@@ -164,7 +155,7 @@ public class BookListFragment extends RoboListFragment {
     public void onListItemClick(ListView listView, View view, int position, long id) {
         super.onListItemClick(listView, view, position, id);
 
-        mCallbacks.onItemSelected(books.get(position).getHash());
+        mCallbacks.onItemSelected(books.get(position).getFilename());
     }
 
     @Override
