@@ -184,9 +184,9 @@ public class BookListFragment extends RoboListFragment {
                 return true;
             case R.id.action_sync:
                 if (!bookscanClient.isLogin()) {
-                    bookscanClient.login(new BookscanClient.SuccessListener() {
+                    bookscanClient.login(new BookscanClient.Listener() {
                         @Override
-                        public void onSuccess(String url, String html) {
+                        public void onSuccess(String url, byte[] responseBody) {
                             syncBookList();
                         }
                     });

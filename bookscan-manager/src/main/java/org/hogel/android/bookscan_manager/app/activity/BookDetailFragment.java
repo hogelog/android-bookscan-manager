@@ -4,9 +4,11 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 import com.j256.ormlite.dao.Dao;
 import org.hogel.android.bookscan_manager.app.R;
+import org.hogel.android.bookscan_manager.app.bookscan.BookscanClient;
 import org.hogel.android.bookscan_manager.app.bookscan.model.Book;
 import org.hogel.android.bookscan_manager.app.dao.DatabaseHelper;
 import org.slf4j.Logger;
@@ -22,13 +24,13 @@ import java.sql.SQLException;
  * in two-pane mode (on tablets) or a {@link BookDetailActivity}
  * on handsets.
  */
-public class BookDetailFragment extends RoboFragment {
+public class BookDetailFragment extends RoboFragment implements View.OnClickListener {
     private static final Logger LOG = LoggerFactory.getLogger(BookDetailFragment.class);
-    /**
-     * The fragment argument representing the item ID that this fragment
-     * represents.
-     */
+
     public static final String ARG_ITEM_ID = "item_id";
+
+    @Inject
+    private BookscanClient bookscanClient;
 
     @Inject
     private DatabaseHelper databaseHelper;
@@ -58,8 +60,26 @@ public class BookDetailFragment extends RoboFragment {
 
         if (book != null) {
             ((TextView) rootView.findViewById(R.id.book_detail)).setText(book.getFilename());
+
+            Button downloadButton = (Button) rootView.findViewById(R.id.download_button);
+            downloadButton.setOnClickListener(this);
+            downloadButton.setEnabled(!book.isDownloading());
         }
 
         return rootView;
+    }
+
+    @Override
+    public void onClick(final View v) {
+        switch (v.getId()) {
+            case R.id.download_button:
+                bookscanClient.download(book, new BookscanClient.Listener() {
+                    @Override
+                    public void onFinish() {
+                        v.setEnabled(true);
+                    }
+                });
+                v.setEnabled(false);
+        }
     }
 }

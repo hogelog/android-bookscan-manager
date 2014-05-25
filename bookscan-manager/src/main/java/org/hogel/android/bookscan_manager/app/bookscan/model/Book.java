@@ -20,6 +20,8 @@ public class Book {
     @DatabaseField
     private String digest;
 
+    private boolean downloading = false;
+
     @Override
     public String toString() {
         return filename;
