@@ -4,10 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
-import android.view.View;
+import android.view.*;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import com.google.common.collect.Lists;
@@ -187,9 +184,15 @@ public class BookListFragment extends RoboListFragment {
                 return true;
             case R.id.action_sync:
                 if (!bookscanClient.isLogin()) {
-                    bookscanClient.login();
+                    bookscanClient.login(new BookscanClient.SuccessListener() {
+                        @Override
+                        public void onSuccess(String url, String html) {
+                            syncBookList();
+                        }
+                    });
+                } else {
+                    syncBookList();
                 }
-                syncBookList();
                 return true;
         }
 
@@ -197,17 +200,21 @@ public class BookListFragment extends RoboListFragment {
     }
 
     private void syncBookList() {
-        List<Book> fetchBooks = bookscanClient.fetchBookList();
-        try {
-            TableUtils.clearTable(databaseHelper.getConnectionSource(), Book.class);
-            for (Book book : fetchBooks) {
-                bookDao.create(book);
+        bookscanClient.fetchBookList(new BookscanClient.FetchBookListListener() {
+            @Override
+            public void onSuccess(String url, String html, List<Book> fetchBooks) {
+                try {
+                    TableUtils.clearTable(databaseHelper.getConnectionSource(), Book.class);
+                    for (Book book : fetchBooks) {
+                        bookDao.create(book);
+                    }
+                } catch (SQLException e) {
+                    LOG.error(e.getMessage(), e);
+                }
+                books.clear();
+                books.addAll(fetchBooks);
+                booksAdapter.notifyDataSetChanged();
             }
-        } catch (SQLException e) {
-            LOG.error(e.getMessage(), e);
-        }
-        books.clear();
-        books.addAll(fetchBooks);
-        booksAdapter.notifyDataSetChanged();
+        });
     }
 }

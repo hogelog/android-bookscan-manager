@@ -55,7 +55,11 @@ public class LoginDialogFragment extends RoboDialogFragment implements View.OnCl
     public void onClick(View v) {
         String loginMail = loginMailEdit.getText().toString();
         String loginPass = loginPassEdit.getText().toString();
-        bookscanClient.login(loginMail, loginPass);
-        dismiss();
+        bookscanClient.login(loginMail, loginPass, new BookscanClient.SuccessListener() {
+            @Override
+            public void onSuccess(String url, String html) {
+                dismiss();
+            }
+        });
     }
 }

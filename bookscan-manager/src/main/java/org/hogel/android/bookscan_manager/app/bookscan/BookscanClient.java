@@ -4,15 +4,17 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.support.v4.app.FragmentManager;
 import android.widget.Toast;
-import com.google.common.base.Optional;
+import com.google.common.base.Charsets;
 import com.google.common.collect.Lists;
+import com.loopj.android.http.AsyncHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
+import org.apache.http.Header;
+import org.apache.http.HttpStatus;
 import org.hogel.android.bookscan_manager.app.R;
 import org.hogel.android.bookscan_manager.app.activity.LoginDialogFragment;
 import org.hogel.android.bookscan_manager.app.bookscan.model.Book;
-import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -23,10 +25,7 @@ import roboguice.inject.InjectResource;
 import roboguice.util.Strings;
 
 import javax.inject.Inject;
-import java.io.IOException;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ExecutionException;
 
 public class BookscanClient {
     private static final Logger LOG = LoggerFactory.getLogger(BookscanClient.class);
@@ -48,102 +47,54 @@ public class BookscanClient {
     private LoginDialogFragment loginDialogFragment;
 
     @Inject
-    private CookieManager cookieManager;
+    private BookscanHttpClient bookscanHttpClient;
+    @Inject
+    private BookscanCookieStore bookscanCookieStore;
 
-    public void login() {
+    public void login(SuccessListener listener) {
         if (!hasLoginPreference()) {
             loginDialogFragment.show(fragmentManager, "login");
         } else {
-            _login(preferences.getString(prefsLoginMail, ""), preferences.getString(prefsLoginPass, ""));
+            _login(preferences.getString(prefsLoginMail, ""), preferences.getString(prefsLoginPass, ""), listener);
         }
     }
 
-    public void login(String loginMail, String loginPass) {
+    public void login(String loginMail, String loginPass, SuccessListener listener) {
         SharedPreferences.Editor editor = preferences.edit();
         editor.putString(prefsLoginMail, loginMail);
         editor.putString(prefsLoginPass, loginPass);
         editor.commit();
-        _login(loginMail, loginPass);
+        _login(loginMail, loginPass, listener);
     }
 
-    private void _login(String loginMail, String loginPass) {
-        Connection connection = connect(R.string.url_login)
-            .method(Connection.Method.POST)
-            .data("email", loginMail, "password", loginPass);
-        Optional<Document> result = execute(connection);
-        if (result.isPresent()) {
-            Toast.makeText(context, R.string.action_login_success, Toast.LENGTH_SHORT).show();
-        } else {
-            Toast.makeText(context, R.string.action_login_fail, Toast.LENGTH_SHORT).show();
-        }
-    }
+    private void _login(String loginMail, String loginPass, final SuccessListener listener) {
+        bookscanCookieStore.clear();
 
-    public List<Book> fetchBookList() {
-        final List<Book> books = Lists.newArrayList();
-        Connection connection = connect(R.string.url_book_list).method(Connection.Method.GET);
-        Optional<Document> result = execute(connection);
-
-        if (!result.isPresent()) {
-            return books;
-        }
-
-        Document document = result.get();
-        Elements bookLinks = document.select("#sortable_box > div > a");
-        for (Element bookLink : bookLinks) {
-            String href = bookLink.attr("href");
-            Uri bookUri = Uri.parse(href);
-            String digest = bookUri.getQueryParameter("d");
-            String hash = bookUri.getQueryParameter("h");
-            String filename = bookUri.getQueryParameter("f");
-            final Book book = new Book(filename, hash, digest);
-            books.add(book);
-        }
-        return books;
-    }
-
-    public Connection connect(int urlId) {
-        String url = context.getString(urlId);
-        return Jsoup.connect(url).cookies(cookieManager.getCookies());
-    }
-
-    public Optional<Document> execute(Connection connection) {
-        AsyncTask<Connection, Void, Optional<Document>> task = new AsyncTask<Connection, Void, Optional<Document>>() {
+        final String url = context.getString(R.string.url_login);
+        final RequestParams params = new RequestParams("email", loginMail, "password", loginPass);
+        bookscanHttpClient.post(context, url, params, new ResponseHandler() {
             @Override
-            protected Optional<Document> doInBackground(Connection... connections) {
-                try {
-                    Connection.Response response = connections[0].execute();
-                    Document document = response.parse();
-                    Map<String, String> cookies = response.cookies();
-                    if (cookies.size() > 0) {
-                        cookieManager.putAll(cookies);
-                    }
-                    return Optional.of(document);
-                } catch (IOException e) {
-                    LOG.error(e.getMessage(), e);
-                    Toast.makeText(context, R.string.error_network, Toast.LENGTH_LONG).show();
+            public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+                Toast.makeText(context, R.string.action_login_success, Toast.LENGTH_SHORT).show();
+                final String html = new String(responseBody, Charsets.UTF_8);
+                listener.onSuccess(url, html);
+            }
+        });
+    }
+
+    public void fetchBookList(final SuccessListener listener) {
+        final String url = context.getString(R.string.url_book_list);
+        bookscanHttpClient.get(context, url, new ResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+                if (statusCode != HttpStatus.SC_OK) {
+                    LOG.error("{}: {}", url, statusCode);
+                    return;
                 }
-                return Optional.absent();
+                final String html = new String(responseBody, Charsets.UTF_8);
+                listener.onSuccess(url, html);
             }
-
-            @Override
-            protected void onPreExecute() {
-                Activity activity = (Activity) context;
-                activity.setProgressBarIndeterminateVisibility(true);
-            }
-
-            @Override
-            protected void onPostExecute(Optional<Document> documentOptional) {
-                Activity activity = (Activity) context;
-                activity.setProgressBarIndeterminateVisibility(false);
-            }
-        };
-        task.execute(connection);
-        try {
-            return task.get();
-        } catch (InterruptedException | ExecutionException e) {
-            LOG.error(e.getMessage(), e);
-        }
-        return Optional.absent();
+        });
     }
 
     public boolean hasLoginPreference() {
@@ -159,6 +110,48 @@ public class BookscanClient {
     }
 
     public boolean isLogin() {
-        return cookieManager.getCookies().size() > 0;
+        return bookscanCookieStore.getCookies().size() > 0;
+    }
+
+    private class ResponseHandler extends AsyncHttpResponseHandler {
+        @Override
+        public void onStart() {
+            Activity activity = (Activity) context;
+            activity.setProgressBarIndeterminateVisibility(true);
+            super.onStart();
+        }
+
+        @Override
+        public void onFinish() {
+            super.onFinish();
+            Activity activity = (Activity) context;
+            activity.setProgressBarIndeterminateVisibility(false);
+        }
+    }
+
+    public static interface SuccessListener {
+        public void onSuccess(String url, String html);
+    }
+
+    abstract public static class FetchBookListListener implements SuccessListener {
+        @Override
+        public void onSuccess(String url, String html) {
+            final List<Book> books = Lists.newArrayList();
+            Document document = Jsoup.parse(html, url);
+            Elements bookLinks = document.select("#sortable_box > div > a");
+            for (Element bookLink : bookLinks) {
+                String href = bookLink.attr("href");
+                Uri bookUri = Uri.parse(href);
+                String digest = bookUri.getQueryParameter("d");
+                String hash = bookUri.getQueryParameter("h");
+                String filename = bookUri.getQueryParameter("f");
+                final Book book = new Book(filename, hash, digest);
+                books.add(book);
+            }
+
+            onSuccess(url, html, books);
+        }
+
+        abstract public void onSuccess(String url, String html, List<Book> books);
     }
 }

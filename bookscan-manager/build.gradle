@@ -18,7 +18,7 @@ android {
 
     defaultConfig {
         minSdkVersion 16
-        targetSdkVersion 16
+        targetSdkVersion 19
         versionCode 1
         versionName "1.0"
     }
@@ -41,6 +41,7 @@ dependencies {
     compile 'com.loopj.android:android-async-http:1.4.4'
     compile 'com.google.guava:guava:17.0'
     compile 'org.slf4j:slf4j-android:1.7.7'
+    compile 'com.loopj.android:android-async-http:1.4.4'
     compile 'org.jsoup:jsoup:1.7.3'
     compile 'com.j256.ormlite:ormlite-android:4.48'
     compile 'net.arnx:jsonic:1.3.0'
