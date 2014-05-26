@@ -15,8 +15,8 @@
     <string name="action_sync">更新</string>
 
     <string name="action_download">ダウンロード</string>
-    <string name="action_download_success">ダウンロードが完了しました</string>
-    <string name="action_download_fail">ダウンロードが失敗しました</string>
+    <string name="action_network_error">ネットワークエラー</string>
+    <string name="action_download_complete">「%s」のダウンロードが完了しました。</string>
 
     <string name="action_login_success">ログインしました</string>
     <string name="action_login_fail">ログイン失敗</string>
@@ -25,10 +25,14 @@
 
     <string name="error_network">ネットワークエラー</string>
 
+    <string name="url_scheme">https</string>
+    <string name="url_domain">system.bookscan.co.jp</string>
+
     <string name="url_login">https://system.bookscan.co.jp/login.php</string>
     <string name="url_book_list">https://system.bookscan.co.jp/bookshelf_all_cover.php</string>
-    <string name="url_download">https://system.bookscan.co.jp/download.php</string>
+
+    <string name="url_download_path">/download.php</string>
+
     <string name="path_donload">/sdcard/Download</string>
-    <string name="action_network_error">ネットワークエラー</string>
 
 </resources>

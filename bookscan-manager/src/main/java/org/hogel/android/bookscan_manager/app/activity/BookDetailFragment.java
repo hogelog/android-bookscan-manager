@@ -63,7 +63,6 @@ public class BookDetailFragment extends RoboFragment implements View.OnClickList
 
             Button downloadButton = (Button) rootView.findViewById(R.id.download_button);
             downloadButton.setOnClickListener(this);
-            downloadButton.setEnabled(!book.isDownloading());
         }
 
         return rootView;
@@ -73,13 +72,7 @@ public class BookDetailFragment extends RoboFragment implements View.OnClickList
     public void onClick(final View v) {
         switch (v.getId()) {
             case R.id.download_button:
-                bookscanClient.download(book, new BookscanClient.Listener() {
-                    @Override
-                    public void onFinish() {
-                        v.setEnabled(true);
-                    }
-                });
-                v.setEnabled(false);
+                bookscanClient.download(book);
         }
     }
 }

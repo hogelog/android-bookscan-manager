@@ -1,14 +1,14 @@
 package org.hogel.android.bookscan_manager.app.bookscan;
 
 import android.app.Activity;
-import android.content.Context;
-import android.content.SharedPreferences;
+import android.app.DownloadManager;
+import android.content.*;
 import android.net.Uri;
+import android.os.Environment;
 import android.support.v4.app.FragmentManager;
 import android.widget.Toast;
 import com.google.common.base.Charsets;
 import com.google.common.collect.Lists;
-import com.google.common.io.Files;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 import org.apache.http.Header;
@@ -27,8 +27,6 @@ import roboguice.util.Strings;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import java.io.File;
-import java.io.IOException;
 import java.util.List;
 
 @Singleton
@@ -55,6 +53,9 @@ public class BookscanClient {
     private BookscanHttpClient bookscanHttpClient;
     @Inject
     private BookscanCookieStore bookscanCookieStore;
+
+    @Inject
+    private DownloadManager downloadManager;
 
     public void login(Listener listener) {
         if (!hasLoginPreference()) {
@@ -128,33 +129,21 @@ public class BookscanClient {
         return bookscanCookieStore.getCookies().size() > 0;
     }
 
-    public void download(final Book book, final Listener listener) {
-        final String downloadUrl  = context.getString(R.string.url_download);
-        final RequestParams params = new RequestParams("d", book.getDigest(), "f", book.getFilename());
+    public void download(final Book book) {
+        final Uri.Builder downloadUriBuilder = new Uri.Builder();
+        downloadUriBuilder.scheme(context.getString(R.string.url_scheme));
+        downloadUriBuilder.authority(context.getString(R.string.url_domain));
+        downloadUriBuilder.path(context.getString(R.string.url_download_path));
+        downloadUriBuilder.appendQueryParameter("d", book.getDigest());
+        downloadUriBuilder.appendQueryParameter("f", book.getFilename());
 
-        book.setDownloading(true);
-        bookscanHttpClient.get(downloadUrl, params, new ResponseHandler() {
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
-                final File downloadFile = new File(context.getString(R.string.path_donload), book.getFilename());
-                try {
-                    Files.write(responseBody, downloadFile);
-                    Toast.makeText(context, R.string.action_download_success, Toast.LENGTH_SHORT).show();
-                } catch (IOException e) {
-                    LOG.error(e.getMessage(), e);
-                    Toast.makeText(context, R.string.action_download_fail, Toast.LENGTH_SHORT).show();
-                }
-                listener.onSuccess(downloadUrl, responseBody);
-            }
+        final DownloadManager.Request downloadRequest = new DownloadManager.Request(downloadUriBuilder.build());
+        downloadRequest.addRequestHeader("Cookie", bookscanCookieStore.pack());
+        downloadRequest.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+        downloadRequest.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, book.getFilename());
 
-            @Override
-            public void onFinish() {
-                super.onFinish();
-                book.setDownloading(false);
-                listener.onFinish();
-            }
-        });
-    }
+        downloadManager.enqueue(downloadRequest);
+    };
 
     private class ResponseHandler extends AsyncHttpResponseHandler {
         @Override
@@ -197,7 +186,7 @@ public class BookscanClient {
                 String digest = bookUri.getQueryParameter("d");
                 String hash = bookUri.getQueryParameter("h");
                 String filename = bookUri.getQueryParameter("f");
-                final Book book = new Book(filename, hash, digest, false);
+                final Book book = new Book(filename, hash, digest);
                 books.add(book);
             }
 
