@@ -1,4 +1,4 @@
-package org.hogel.android.bookscan_manager.app.activity;
+package org.hogel.android.bookscanmanager.app.activity;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -7,8 +7,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
-import org.hogel.android.bookscan_manager.app.R;
-import org.hogel.android.bookscan_manager.app.bookscan.BookscanClient;
+import org.hogel.android.bookscanmanager.app.R;
+import org.hogel.android.bookscanmanager.app.bookscan.BookscanClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import roboguice.fragment.RoboDialogFragment;

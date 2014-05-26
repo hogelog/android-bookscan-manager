@@ -1,4 +1,4 @@
-package org.hogel.android.bookscan_manager.app.bookscan;
+package org.hogel.android.bookscanmanager.app.bookscan;
 
 import android.app.Activity;
 import android.app.DownloadManager;
@@ -13,9 +13,9 @@ import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 import org.apache.http.Header;
 import org.apache.http.HttpStatus;
-import org.hogel.android.bookscan_manager.app.R;
-import org.hogel.android.bookscan_manager.app.activity.LoginDialogFragment;
-import org.hogel.android.bookscan_manager.app.bookscan.model.Book;
+import org.hogel.android.bookscanmanager.app.R;
+import org.hogel.android.bookscanmanager.app.activity.LoginDialogFragment;
+import org.hogel.android.bookscanmanager.app.bookscan.model.Book;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;

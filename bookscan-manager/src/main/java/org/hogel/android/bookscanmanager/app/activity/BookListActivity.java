@@ -1,9 +1,9 @@
-package org.hogel.android.bookscan_manager.app.activity;
+package org.hogel.android.bookscanmanager.app.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Window;
-import org.hogel.android.bookscan_manager.app.R;
+import org.hogel.android.bookscanmanager.app.R;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import roboguice.activity.RoboFragmentActivity;

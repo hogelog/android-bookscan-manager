@@ -13,7 +13,7 @@
         android:layout_height="wrap_content"
         android:padding="16dp"
         android:textIsSelectable="true"
-        tools:context="org.hogel.android.bookscan_manager.app.activity.BookDetailFragment"
+        tools:context="org.hogel.android.bookscanmanager.app.activity.BookDetailFragment"
         android:text="書籍タイトル"
         />
 

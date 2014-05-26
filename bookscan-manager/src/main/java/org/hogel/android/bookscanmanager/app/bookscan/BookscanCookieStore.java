@@ -1,4 +1,4 @@
-package org.hogel.android.bookscan_manager.app.bookscan;
+package org.hogel.android.bookscanmanager.app.bookscan;
 
 import android.content.Context;
 import com.loopj.android.http.PersistentCookieStore;

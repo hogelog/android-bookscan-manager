@@ -1,4 +1,4 @@
-package org.hogel.android.bookscan_manager.app.bookscan.exception;
+package org.hogel.android.bookscanmanager.app.bookscan.exception;
 
 public class BookscanNetworkException extends AbstractBookscanException {
     public BookscanNetworkException(Exception e) {

@@ -1,10 +1,10 @@
-package org.hogel.android.bookscan_manager.app.activity;
+package org.hogel.android.bookscanmanager.app.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.view.MenuItem;
-import org.hogel.android.bookscan_manager.app.R;
+import org.hogel.android.bookscanmanager.app.R;
 import roboguice.activity.RoboFragmentActivity;
 
 

@@ -1,7 +1,7 @@
-package org.hogel.android.bookscan_manager.app;
+package org.hogel.android.bookscanmanager.app;
 
 import android.app.Application;
-import org.hogel.android.bookscan_manager.app.guice.BookscanModule;
+import org.hogel.android.bookscanmanager.app.guice.BookscanModule;
 import roboguice.RoboGuice;
 import roboguice.config.DefaultRoboModule;
 

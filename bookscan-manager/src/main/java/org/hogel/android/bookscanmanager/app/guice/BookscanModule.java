@@ -1,4 +1,4 @@
-package org.hogel.android.bookscan_manager.app.guice;
+package org.hogel.android.bookscanmanager.app.guice;
 
 import android.app.DownloadManager;
 import android.app.Service;

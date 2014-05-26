@@ -1,4 +1,4 @@
-package org.hogel.android.bookscan_manager.app.activity;
+package org.hogel.android.bookscanmanager.app.activity;
 
 import android.app.Activity;
 import android.content.Context;
@@ -10,10 +10,10 @@ import android.widget.ListView;
 import com.google.common.collect.Lists;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.table.TableUtils;
-import org.hogel.android.bookscan_manager.app.R;
-import org.hogel.android.bookscan_manager.app.bookscan.BookscanClient;
-import org.hogel.android.bookscan_manager.app.bookscan.model.Book;
-import org.hogel.android.bookscan_manager.app.dao.DatabaseHelper;
+import org.hogel.android.bookscanmanager.app.R;
+import org.hogel.android.bookscanmanager.app.bookscan.BookscanClient;
+import org.hogel.android.bookscanmanager.app.bookscan.model.Book;
+import org.hogel.android.bookscanmanager.app.dao.DatabaseHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import roboguice.fragment.RoboListFragment;

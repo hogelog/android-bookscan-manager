@@ -1,4 +1,4 @@
-package org.hogel.android.bookscan_manager.app.bookscan.model;
+package org.hogel.android.bookscanmanager.app.bookscan.model;
 
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;

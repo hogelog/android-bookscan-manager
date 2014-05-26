@@ -3,5 +3,5 @@
     android:id="@+id/book_detail_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="org.hogel.android.bookscan_manager.app.activity.BookDetailActivity"
+    tools:context="org.hogel.android.bookscanmanager.app.activity.BookDetailActivity"
     tools:ignore="MergeRootFrame" />
