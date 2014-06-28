@@ -1,19 +1,23 @@
 package org.hogel.android.bookscanmanager.app.dao;
 
-import android.content.Context;
-import android.database.sqlite.SQLiteDatabase;
 import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
-import lombok.Getter;
-import org.hogel.android.bookscanmanager.app.bookscan.model.Book;
+
+import org.hogel.bookscan.model.Book;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
+
+import java.sql.SQLException;
+
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import java.sql.SQLException;
+
+import lombok.Getter;
 
 @Singleton
 public class DatabaseHelper extends OrmLiteSqliteOpenHelper {

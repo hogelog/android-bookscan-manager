@@ -4,15 +4,13 @@
     <string name="app_name">bookscan-manager</string>
     <string name="title_book_detail">Book Detail</string>
 
-    <string name="prefs_login_mail">prefs_login_mail</string>
-    <string name="prefs_login_pass">prefs_login_pass</string>
-    <string name="prefs_cookies">prefs_cookies</string>
-
     <string name="login_mail">メールアドレス</string>
     <string name="login_pass">パスワード</string>
 
     <string name="action_login">ログイン</string>
+
     <string name="action_sync">更新</string>
+    <string name="action_sync_fail">更新失敗</string>
 
     <string name="action_download">ダウンロード</string>
     <string name="action_network_error">ネットワークエラー</string>
@@ -25,14 +23,8 @@
 
     <string name="error_network">ネットワークエラー</string>
 
-    <string name="url_scheme">https</string>
-    <string name="url_domain">system.bookscan.co.jp</string>
-
-    <string name="url_login">https://system.bookscan.co.jp/login.php</string>
-    <string name="url_book_list">https://system.bookscan.co.jp/bookshelf_all_cover.php</string>
-
     <string name="url_download_path">/download.php</string>
 
-    <string name="path_donload">/sdcard/Download</string>
+    <string name="path_download">/sdcard/Download</string>
 
 </resources>

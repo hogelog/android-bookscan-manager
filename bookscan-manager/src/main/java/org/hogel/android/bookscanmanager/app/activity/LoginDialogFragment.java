@@ -1,31 +1,31 @@
 package org.hogel.android.bookscanmanager.app.activity;
 
-import android.content.SharedPreferences;
+import com.google.inject.Inject;
+
+import org.hogel.android.bookscanmanager.app.R;
+import org.hogel.android.bookscanmanager.app.util.Preferences;
+import org.hogel.android.bookscanmanager.app.util.Toasts;
+import org.hogel.bookscan.AsyncBookscanClient;
+import org.hogel.bookscan.listener.LoginListener;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
-import org.hogel.android.bookscanmanager.app.R;
-import org.hogel.android.bookscanmanager.app.bookscan.BookscanClient;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import roboguice.fragment.RoboDialogFragment;
-import roboguice.inject.InjectResource;
-import roboguice.inject.InjectView;
 
-import javax.inject.Inject;
+import roboguice.fragment.RoboDialogFragment;
+import roboguice.inject.InjectView;
 
 public class LoginDialogFragment extends RoboDialogFragment implements View.OnClickListener {
     private static final Logger LOG = LoggerFactory.getLogger(LoginDialogFragment.class);
 
     @Inject
-    private SharedPreferences preferences;
-    @InjectResource(R.string.prefs_login_mail)
-    private String prefLoginMail;
-    @InjectResource(R.string.prefs_login_pass)
-    private String prefLoginPass;
+    private Preferences preferences;
 
     @InjectView(R.id.loginButton)
     private Button loginButton;
@@ -35,7 +35,10 @@ public class LoginDialogFragment extends RoboDialogFragment implements View.OnCl
     private TextView loginPassEdit;
 
     @Inject
-    BookscanClient bookscanClient;
+    AsyncBookscanClient client;
+
+    @Inject
+    private FragmentManager fragmentManager;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -47,19 +50,28 @@ public class LoginDialogFragment extends RoboDialogFragment implements View.OnCl
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         loginButton.setOnClickListener(this);
-        loginMailEdit.setText(preferences.getString(prefLoginMail, ""));
-        loginPassEdit.setText(preferences.getString(prefLoginPass, ""));
+        loginMailEdit.setText(preferences.getLoginMail());
+        loginPassEdit.setText(preferences.getLoginPass());
     }
 
     @Override
     public void onClick(View v) {
         String loginMail = loginMailEdit.getText().toString();
         String loginPass = loginPassEdit.getText().toString();
-        bookscanClient.login(loginMail, loginPass, new BookscanClient.Listener() {
+        client.login(loginMail, loginPass, new LoginListener() {
             @Override
-            public void onFinish() {
+            public void onSuccess() {
                 dismiss();
             }
+
+            @Override
+            public void onError(Exception e) {
+                Toasts.show(getActivity(), R.string.action_login_fail);
+            }
         });
+    }
+
+    public void show() {
+        show(fragmentManager, "login");
     }
 }

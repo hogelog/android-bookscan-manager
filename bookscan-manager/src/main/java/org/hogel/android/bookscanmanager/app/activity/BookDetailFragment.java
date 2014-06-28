@@ -1,22 +1,26 @@
 package org.hogel.android.bookscanmanager.app.activity;
 
+import com.j256.ormlite.dao.Dao;
+
+import org.hogel.android.bookscanmanager.app.R;
+import org.hogel.android.bookscanmanager.app.bookscan.BookscanDownloadManager;
+import org.hogel.android.bookscanmanager.app.dao.DatabaseHelper;
+import org.hogel.bookscan.model.Book;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
-import com.j256.ormlite.dao.Dao;
-import org.hogel.android.bookscanmanager.app.R;
-import org.hogel.android.bookscanmanager.app.bookscan.BookscanClient;
-import org.hogel.android.bookscanmanager.app.bookscan.model.Book;
-import org.hogel.android.bookscanmanager.app.dao.DatabaseHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import roboguice.fragment.RoboFragment;
+
+import java.sql.SQLException;
 
 import javax.inject.Inject;
-import java.sql.SQLException;
+
+import roboguice.fragment.RoboFragment;
 
 /**
  * A fragment representing a single Book detail screen.
@@ -30,7 +34,7 @@ public class BookDetailFragment extends RoboFragment implements View.OnClickList
     public static final String ARG_ITEM_ID = "item_id";
 
     @Inject
-    private BookscanClient bookscanClient;
+    private BookscanDownloadManager downloadManager;
 
     @Inject
     private DatabaseHelper databaseHelper;
@@ -72,7 +76,8 @@ public class BookDetailFragment extends RoboFragment implements View.OnClickList
     public void onClick(final View v) {
         switch (v.getId()) {
             case R.id.download_button:
-                bookscanClient.download(book);
+                downloadManager.download(book);
+                break;
         }
     }
 }
