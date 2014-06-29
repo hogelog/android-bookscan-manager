@@ -7,6 +7,7 @@ import com.j256.ormlite.table.TableUtils;
 
 import org.hogel.android.bookscanmanager.app.R;
 import org.hogel.android.bookscanmanager.app.dao.DatabaseHelper;
+import org.hogel.android.bookscanmanager.app.dao.record.BookRecord;
 import org.hogel.android.bookscanmanager.app.util.Preferences;
 import org.hogel.android.bookscanmanager.app.util.Toasts;
 import org.hogel.bookscan.AsyncBookscanClient;
@@ -66,7 +67,7 @@ public class BookListFragment extends RoboListFragment {
     @Inject
     private Preferences preferences;
 
-    private Dao<Book, String> bookDao;
+    private Dao<BookRecord, String> bookDao;
 
     private final List<Book> books = Lists.newArrayList();
 
@@ -101,7 +102,10 @@ public class BookListFragment extends RoboListFragment {
         bookDao = databaseHelper.getBookDao();
 
         try {
-            books.addAll(bookDao.queryForAll());
+            List<BookRecord> bookRecords = bookDao.queryForAll();
+            for (BookRecord bookRecord : bookRecords) {
+                books.add(bookRecord.toBook());
+            }
         } catch (SQLException e) {
             LOG.error(e.getMessage(), e);
         }
@@ -230,7 +234,7 @@ public class BookListFragment extends RoboListFragment {
                 try {
                     TableUtils.clearTable(databaseHelper.getConnectionSource(), Book.class);
                     for (Book book : fetchBooks) {
-                        bookDao.create(book);
+                        bookDao.create(new BookRecord(book));
                     }
                     books.clear();
                     books.addAll(fetchBooks);

@@ -22,9 +22,4 @@
     <string name="login_title">BOOKSCANログイン</string>
 
     <string name="error_network">ネットワークエラー</string>
-
-    <string name="url_download_path">/download.php</string>
-
-    <string name="path_download">/sdcard/Download</string>
-
 </resources>

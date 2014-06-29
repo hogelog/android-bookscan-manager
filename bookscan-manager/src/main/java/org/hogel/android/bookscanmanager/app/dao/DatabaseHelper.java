@@ -5,7 +5,7 @@ import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
 
-import org.hogel.bookscan.model.Book;
+import org.hogel.android.bookscanmanager.app.dao.record.BookRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,7 +27,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
     private static final int DATABASE_VERSION = 1;
 
     @Getter
-    private Dao<Book, String> bookDao;
+    private Dao<BookRecord, String> bookDao;
 
     @Inject
     public DatabaseHelper(Context context) {
@@ -38,7 +38,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase database, ConnectionSource connectionSource) {
         try {
-            TableUtils.createTable(connectionSource, Book.class);
+            TableUtils.createTable(connectionSource, BookRecord.class);
         } catch (SQLException e) {
             LOG.error(e.getMessage(), e);
             throw new RuntimeException(e);
@@ -48,7 +48,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase database, ConnectionSource connectionSource, int oldVersion, int newVersion) {
         try {
-            TableUtils.dropTable(connectionSource, Book.class, true);
+            TableUtils.dropTable(connectionSource, BookRecord.class, true);
             onCreate(database, connectionSource);
         } catch (SQLException e) {
             LOG.error(e.getMessage(), e);
@@ -59,7 +59,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
     @Override
     public void onOpen(SQLiteDatabase db) {
         try {
-            bookDao = getDao(Book.class);
+            bookDao = getDao(BookRecord.class);
         } catch (SQLException e) {
             LOG.error(e.getMessage(), e);
             throw new RuntimeException(e);

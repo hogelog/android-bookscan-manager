@@ -5,6 +5,7 @@ import com.j256.ormlite.dao.Dao;
 import org.hogel.android.bookscanmanager.app.R;
 import org.hogel.android.bookscanmanager.app.bookscan.BookscanDownloadManager;
 import org.hogel.android.bookscanmanager.app.dao.DatabaseHelper;
+import org.hogel.android.bookscanmanager.app.dao.record.BookRecord;
 import org.hogel.bookscan.model.Book;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,7 +40,7 @@ public class BookDetailFragment extends RoboFragment implements View.OnClickList
     @Inject
     private DatabaseHelper databaseHelper;
 
-    private Dao<Book, String> bookDao;
+    private Dao<BookRecord, String> bookDao;
 
     private Book book;
 
@@ -50,7 +51,7 @@ public class BookDetailFragment extends RoboFragment implements View.OnClickList
         bookDao = databaseHelper.getBookDao();
         if (getArguments().containsKey(ARG_ITEM_ID)) {
             try {
-                book = bookDao.queryForId(getArguments().getString(ARG_ITEM_ID));
+                book = bookDao.queryForId(getArguments().getString(ARG_ITEM_ID)).toBook();
             } catch (SQLException e) {
                 LOG.error(e.getMessage(), e);
             }
