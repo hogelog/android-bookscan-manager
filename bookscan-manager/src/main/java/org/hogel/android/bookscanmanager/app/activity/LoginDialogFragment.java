@@ -56,11 +56,14 @@ public class LoginDialogFragment extends RoboDialogFragment implements View.OnCl
 
     @Override
     public void onClick(View v) {
-        String loginMail = loginMailEdit.getText().toString();
-        String loginPass = loginPassEdit.getText().toString();
+        final String loginMail = loginMailEdit.getText().toString();
+        final String loginPass = loginPassEdit.getText().toString();
         client.login(loginMail, loginPass, new LoginListener() {
             @Override
             public void onSuccess() {
+                Toasts.show(getActivity(), R.string.action_login_success);
+                preferences.putLoginPreference(loginMail, loginPass);
+                preferences.putCookies(client.getCookies());
                 dismiss();
             }
 

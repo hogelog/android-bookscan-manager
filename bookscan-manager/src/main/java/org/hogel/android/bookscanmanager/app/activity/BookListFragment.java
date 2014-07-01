@@ -206,6 +206,7 @@ public class BookListFragment extends RoboListFragment {
                         client.login(preferences.getLoginMail(), preferences.getLoginPass(), new LoginListener() {
                             @Override
                             public void onSuccess() {
+                                preferences.putCookies(client.getCookies());
                                 syncBookList();
                             }
 

@@ -1,14 +1,25 @@
 package org.hogel.android.bookscanmanager.app.util;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.inject.Inject;
 
+import net.arnx.jsonic.JSON;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import android.content.SharedPreferences;
+
+import java.util.Map;
 
 import roboguice.util.Strings;
 
 public class Preferences {
+    private static final Logger LOG = LoggerFactory.getLogger(Preferences.class);
+
     private static final String LOGIN_MAIL = "login_mail";
     private static final String LOGIN_PASS = "login_pass";
+    private static final String COOKIES = "cookies";
 
     @Inject
     private SharedPreferences preferences;
@@ -22,9 +33,7 @@ public class Preferences {
     }
 
     public void putLoginMail(String loginMail) {
-        SharedPreferences.Editor editor = preferences.edit();
-        editor.putString(LOGIN_MAIL, loginMail);
-        editor.commit();
+        preferences.edit().putString(LOGIN_MAIL, loginMail).commit();
     }
 
     public String getLoginPass() {
@@ -32,12 +41,31 @@ public class Preferences {
     }
 
     public void putLoginPass(String loginPass) {
-        SharedPreferences.Editor editor = preferences.edit();
-        editor.putString(LOGIN_PASS, loginPass);
-        editor.commit();
+        preferences.edit().putString(LOGIN_PASS, loginPass).commit();
     }
 
     public boolean hasLoginPreference() {
         return Strings.notEmpty(getLoginMail()) && Strings.notEmpty(getLoginPass());
+    }
+
+    public void putLoginPreference(String loginMail, String loginPass) {
+        preferences
+                .edit()
+                .putString(LOGIN_MAIL, loginMail)
+                .putString(LOGIN_PASS, loginPass)
+                .commit();
+    }
+
+    public Map<String, String> getCookies() {
+        String jsonCookies = preferences.getString(COOKIES, null);
+        if (jsonCookies == null) {
+            return ImmutableMap.of();
+        }
+        return JSON.decode(jsonCookies);
+    }
+
+    public void putCookies(Map<String, String> cookies) {
+        String jsonCookies = JSON.encode(cookies);
+        preferences.edit().putString(COOKIES, jsonCookies).commit();
     }
 }
