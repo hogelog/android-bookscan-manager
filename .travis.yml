@@ -1,4 +1,7 @@
 language: android
+android:
+  components:
+    - build-tools-19.1.0
 env:
   global:
     - DEPLOYGATE_USER=hogelog
