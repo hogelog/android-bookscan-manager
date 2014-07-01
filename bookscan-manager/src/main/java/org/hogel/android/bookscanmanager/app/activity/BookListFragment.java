@@ -3,11 +3,14 @@ package org.hogel.android.bookscanmanager.app.activity;
 import com.google.common.collect.Lists;
 
 import com.j256.ormlite.dao.Dao;
-import com.j256.ormlite.table.TableUtils;
+import com.squareup.otto.Subscribe;
 
 import org.hogel.android.bookscanmanager.app.R;
 import org.hogel.android.bookscanmanager.app.dao.DatabaseHelper;
 import org.hogel.android.bookscanmanager.app.dao.record.BookRecord;
+import org.hogel.android.bookscanmanager.app.event.LoginEvent;
+import org.hogel.android.bookscanmanager.app.event.SyncBooksEvent;
+import org.hogel.android.bookscanmanager.app.util.BusProvider;
 import org.hogel.android.bookscanmanager.app.util.Preferences;
 import org.hogel.android.bookscanmanager.app.util.Toasts;
 import org.hogel.bookscan.AsyncBookscanClient;
@@ -93,6 +96,18 @@ public class BookListFragment extends RoboListFragment {
     };
 
     public BookListFragment() {
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        BusProvider.register(this);
+    }
+
+    @Override
+    public void onPause() {
+        BusProvider.register(this);
+        super.onPause();
     }
 
     @Override
@@ -203,17 +218,18 @@ public class BookListFragment extends RoboListFragment {
             case R.id.action_sync:
                 if (!client.isLogin()) {
                     if (preferences.hasLoginPreference()) {
-                        client.login(preferences.getLoginMail(), preferences.getLoginPass(), new LoginListener() {
+                        final String loginMail = preferences.getLoginMail();
+                        final String loginPass = preferences.getLoginPass();
+                        client.login(loginMail, loginPass, new LoginListener() {
                             @Override
                             public void onSuccess() {
-                                preferences.putCookies(client.getCookies());
-                                syncBookList();
+                                BusProvider.post(LoginEvent.success(loginMail, loginPass));
                             }
 
                             @Override
                             public void onError(Exception e) {
                                 LOG.error(e.getMessage(), e);
-                                Toasts.show(context, R.string.action_login_fail);
+                                BusProvider.post(LoginEvent.failure());
                             }
                         });
                     } else {
@@ -228,29 +244,50 @@ public class BookListFragment extends RoboListFragment {
         return super.onOptionsItemSelected(item);
     }
 
+    @Subscribe
+    public void loginSuccess(LoginEvent.Success success) {
+        preferences.putCookies(client.getCookies());
+        syncBookList();
+    }
+
+    @Subscribe
+    public void loginFailure(LoginEvent.Failure failure) {
+        Toasts.show(context, R.string.action_login_fail);
+    }
+
     private void syncBookList() {
         client.fetchBooks(new FetchBooksListener() {
             @Override
             public void onSuccess(List<Book> fetchBooks) {
-                try {
-                    TableUtils.clearTable(databaseHelper.getConnectionSource(), Book.class);
-                    for (Book book : fetchBooks) {
-                        bookDao.create(new BookRecord(book));
-                    }
-                    books.clear();
-                    books.addAll(fetchBooks);
-                    booksAdapter.notifyDataSetChanged();
-                } catch (SQLException e) {
-                    LOG.error(e.getMessage(), e);
-                    Toasts.show(context, R.string.action_sync_fail);
-                }
+                BusProvider.post(SyncBooksEvent.success(fetchBooks));
             }
 
             @Override
             public void onError(Exception e) {
                 LOG.error(e.getMessage(), e);
-                Toasts.show(context, R.string.action_sync_fail);
+                BusProvider.post(SyncBooksEvent.failure());
             }
         });
+    }
+
+    @Subscribe
+    public void syncBooksSuccess(SyncBooksEvent.Success success) {
+        try {
+            databaseHelper.clearTable(BookRecord.class);
+            for (Book book : success.getBooks()) {
+                bookDao.create(new BookRecord(book));
+            }
+            books.clear();
+            books.addAll(success.getBooks());
+            booksAdapter.notifyDataSetChanged();
+        } catch (SQLException e) {
+            LOG.error(e.getMessage(), e);
+            Toasts.show(context, R.string.action_sync_fail);
+        }
+    }
+
+    @Subscribe
+    public void syncBooksFailure(SyncBooksEvent.Failure failure) {
+        Toasts.show(context, R.string.action_sync_fail);
     }
 }

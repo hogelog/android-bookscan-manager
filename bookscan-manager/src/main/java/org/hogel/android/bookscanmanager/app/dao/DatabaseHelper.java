@@ -65,4 +65,11 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
             throw new RuntimeException(e);
         }
     }
+
+    public void clearBookDao() throws SQLException {
+    }
+
+    public void clearTable(Class<?> recordClass) throws SQLException {
+        TableUtils.clearTable(getConnectionSource(), recordClass);
+    }
 }
