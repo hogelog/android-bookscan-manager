@@ -2,7 +2,11 @@ package org.hogel.android.bookscanmanager.app.activity;
 
 import com.google.inject.Inject;
 
+import com.squareup.otto.Subscribe;
+
 import org.hogel.android.bookscanmanager.app.R;
+import org.hogel.android.bookscanmanager.app.event.LoginEvent;
+import org.hogel.android.bookscanmanager.app.util.BusProvider;
 import org.hogel.android.bookscanmanager.app.util.Preferences;
 import org.hogel.android.bookscanmanager.app.util.Toasts;
 import org.hogel.bookscan.AsyncBookscanClient;
@@ -41,6 +45,18 @@ public class LoginDialogFragment extends RoboDialogFragment implements View.OnCl
     private FragmentManager fragmentManager;
 
     @Override
+    public void onResume() {
+        super.onResume();
+        BusProvider.register(this);
+    }
+
+    @Override
+    public void onPause() {
+        BusProvider.register(this);
+        super.onPause();
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         getDialog().setTitle(R.string.login_title);
         return inflater.inflate(R.layout.fragment_login_dialog, container);
@@ -61,17 +77,27 @@ public class LoginDialogFragment extends RoboDialogFragment implements View.OnCl
         client.login(loginMail, loginPass, new LoginListener() {
             @Override
             public void onSuccess() {
-                Toasts.show(getActivity(), R.string.action_login_success);
-                preferences.putLoginPreference(loginMail, loginPass);
-                preferences.putCookies(client.getCookies());
-                dismiss();
+                BusProvider.post(LoginEvent.success(loginMail, loginPass));
             }
 
             @Override
             public void onError(Exception e) {
-                Toasts.show(getActivity(), R.string.action_login_fail);
+                BusProvider.post(LoginEvent.failure());
             }
         });
+    }
+
+    @Subscribe
+    public void loginSuccess(LoginEvent.Success success) {
+        preferences.putLoginPreference(success.getLoginMail(), success.getLoginPass());
+        preferences.putCookies(client.getCookies());
+        Toasts.show(getActivity(), R.string.action_login_success);
+        dismiss();
+    }
+
+    @Subscribe
+    public void loginFailure(LoginEvent.Failure failure) {
+        Toasts.show(getActivity(), R.string.action_login_fail);
     }
 
     public void show() {
