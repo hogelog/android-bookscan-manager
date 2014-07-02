@@ -1,6 +1,7 @@
 package org.hogel.android.bookscanmanager.app.activity;
 
 import com.j256.ormlite.dao.Dao;
+import com.squareup.picasso.Picasso;
 
 import org.hogel.android.bookscanmanager.app.R;
 import org.hogel.android.bookscanmanager.app.bookscan.BookscanDownloadManager;
@@ -15,6 +16,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.sql.SQLException;
@@ -22,13 +24,8 @@ import java.sql.SQLException;
 import javax.inject.Inject;
 
 import roboguice.fragment.RoboFragment;
+import roboguice.inject.InjectView;
 
-/**
- * A fragment representing a single Book detail screen.
- * This fragment is either contained in a {@link BookListActivity}
- * in two-pane mode (on tablets) or a {@link BookDetailActivity}
- * on handsets.
- */
 public class BookDetailFragment extends RoboFragment implements View.OnClickListener {
     private static final Logger LOG = LoggerFactory.getLogger(BookDetailFragment.class);
 
@@ -39,6 +36,9 @@ public class BookDetailFragment extends RoboFragment implements View.OnClickList
 
     @Inject
     private DatabaseHelper databaseHelper;
+
+    @InjectView(R.id.book_image)
+    private ImageView bookImageView;
 
     private Dao<BookRecord, String> bookDao;
 
@@ -71,6 +71,12 @@ public class BookDetailFragment extends RoboFragment implements View.OnClickList
         }
 
         return rootView;
+    }
+
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        Picasso.with(getActivity()).load(book.getImageUrl()).into(bookImageView);
     }
 
     @Override

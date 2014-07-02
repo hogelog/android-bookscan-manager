@@ -49,6 +49,7 @@ dependencies {
     compile 'com.j256.ormlite:ormlite-android:4.48'
     compile 'net.arnx:jsonic:1.3.0'
     compile 'com.squareup:otto:1.3.5'
+    compile 'com.squareup.picasso:picasso:2.3.2'
 
     provided 'org.projectlombok:lombok:1.12.6'
 }
@@ -60,7 +61,7 @@ deploygate {
 
   apks {
     debug {
-      sourceFile = file("${project.buildDir}/apk/bookscan-manager-debug-unaligned.apk")
+      sourceFile = file("${project.buildDir}/outputs/apk/bookscan-manager-debug-unaligned.apk")
     }
   }
 }
