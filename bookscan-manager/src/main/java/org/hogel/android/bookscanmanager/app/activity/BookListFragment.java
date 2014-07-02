@@ -1,6 +1,7 @@
 package org.hogel.android.bookscanmanager.app.activity;
 
 import com.google.common.collect.Lists;
+import com.google.inject.Inject;
 
 import com.j256.ormlite.dao.Dao;
 import com.squareup.otto.Subscribe;
@@ -20,8 +21,8 @@ import org.hogel.bookscan.model.Book;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.view.Menu;
@@ -34,22 +35,8 @@ import android.widget.ListView;
 import java.sql.SQLException;
 import java.util.List;
 
-import javax.inject.Inject;
-
 import roboguice.fragment.RoboListFragment;
 
-//import org.hogel.android.bookscanmanager.app.bookscan.BookscanClient;
-//import org.hogel.android.bookscanmanager.app.bookscan.model.Book;
-
-/**
- * A list fragment representing a list of Books. This fragment
- * also supports tablet devices by allowing list items to be given an
- * 'activated' state upon selection. This helps indicate which item is
- * currently being viewed in a {@link BookDetailFragment}.
- * <p>
- * Activities containing this fragment MUST implement the {@link Callbacks}
- * interface.
- */
 public class BookListFragment extends RoboListFragment {
     private static final Logger LOG = LoggerFactory.getLogger(BookListFragment.class);
 
@@ -78,22 +65,10 @@ public class BookListFragment extends RoboListFragment {
 
     private static final String STATE_ACTIVATED_POSITION = "activated_position";
 
-    private Callbacks mCallbacks = sDummyCallbacks;
-
     /**
      * The current activated item position. Only used on tablets.
      */
     private int mActivatedPosition = ListView.INVALID_POSITION;
-
-    public interface Callbacks {
-        public void onItemSelected(String id);
-    }
-
-    private static Callbacks sDummyCallbacks = new Callbacks() {
-        @Override
-        public void onItemSelected(String id) {
-        }
-    };
 
     public BookListFragment() {
     }
@@ -147,29 +122,13 @@ public class BookListFragment extends RoboListFragment {
     }
 
     @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-
-        // Activities containing this fragment must implement its callbacks.
-        if (!(activity instanceof Callbacks)) {
-            throw new IllegalStateException("Activity must implement fragment's callbacks.");
-        }
-
-        mCallbacks = (Callbacks) activity;
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-
-        mCallbacks = sDummyCallbacks;
-    }
-
-    @Override
     public void onListItemClick(ListView listView, View view, int position, long id) {
         super.onListItemClick(listView, view, position, id);
 
-        mCallbacks.onItemSelected(books.get(position).getFilename());
+        String filename = books.get(position).getFilename();
+        Intent detailIntent = new Intent(getActivity(), BookDetailActivity.class);
+        detailIntent.putExtra(BookDetailFragment.ARG_ITEM_ID, filename);
+        startActivity(detailIntent);
     }
 
     @Override
