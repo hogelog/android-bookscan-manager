@@ -41,7 +41,9 @@ android {
 
 dependencies {
     compile 'com.android.support:support-v4:19.1.0'
-    compile('org.hogel:bookscan-client:0.0.4-SNAPSHOT')
+    compile('org.hogel:bookscan-client:0.0.4-SNAPSHOT') {
+        exclude module: 'httpclient'
+    }
     compile 'org.roboguice:roboguice:2.0'
     compile 'com.google.guava:guava:17.0'
     compile 'org.slf4j:slf4j-android:1.7.7'
