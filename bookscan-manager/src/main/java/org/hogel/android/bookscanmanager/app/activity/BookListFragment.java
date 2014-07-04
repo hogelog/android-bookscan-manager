@@ -1,11 +1,19 @@
 package org.hogel.android.bookscanmanager.app.activity;
 
+import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
-
 import com.j256.ormlite.dao.Dao;
 import com.squareup.otto.Subscribe;
-
 import org.hogel.android.bookscanmanager.app.R;
 import org.hogel.android.bookscanmanager.app.dao.DatabaseHelper;
 import org.hogel.android.bookscanmanager.app.dao.record.BookRecord;
@@ -20,22 +28,10 @@ import org.hogel.bookscan.listener.LoginListener;
 import org.hogel.bookscan.model.Book;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import android.content.Context;
-import android.content.Intent;
-import android.os.Bundle;
-import android.support.v4.app.FragmentManager;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
-import android.view.View;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
+import roboguice.fragment.RoboListFragment;
 
 import java.sql.SQLException;
 import java.util.List;
-
-import roboguice.fragment.RoboListFragment;
 
 public class BookListFragment extends RoboListFragment {
     private static final Logger LOG = LoggerFactory.getLogger(BookListFragment.class);
@@ -62,13 +58,6 @@ public class BookListFragment extends RoboListFragment {
     private final List<Book> books = Lists.newArrayList();
 
     private ArrayAdapter<Book> booksAdapter;
-
-    private static final String STATE_ACTIVATED_POSITION = "activated_position";
-
-    /**
-     * The current activated item position. Only used on tablets.
-     */
-    private int mActivatedPosition = ListView.INVALID_POSITION;
 
     public BookListFragment() {
     }
@@ -111,17 +100,6 @@ public class BookListFragment extends RoboListFragment {
     }
 
     @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-
-        // Restore the previously serialized activated item position.
-        if (savedInstanceState != null
-                && savedInstanceState.containsKey(STATE_ACTIVATED_POSITION)) {
-            setActivatedPosition(savedInstanceState.getInt(STATE_ACTIVATED_POSITION));
-        }
-    }
-
-    @Override
     public void onListItemClick(ListView listView, View view, int position, long id) {
         super.onListItemClick(listView, view, position, id);
 
@@ -129,37 +107,6 @@ public class BookListFragment extends RoboListFragment {
         Intent detailIntent = new Intent(getActivity(), BookDetailActivity.class);
         detailIntent.putExtra(BookDetailFragment.ARG_ITEM_ID, filename);
         startActivity(detailIntent);
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        if (mActivatedPosition != ListView.INVALID_POSITION) {
-            // Serialize and persist the activated item position.
-            outState.putInt(STATE_ACTIVATED_POSITION, mActivatedPosition);
-        }
-    }
-
-    /**
-     * Turns on activate-on-click mode. When this mode is on, list items will be
-     * given the 'activated' state when touched.
-     */
-    public void setActivateOnItemClick(boolean activateOnItemClick) {
-        // When setting CHOICE_MODE_SINGLE, ListView will automatically
-        // give items the 'activated' state when touched.
-        getListView().setChoiceMode(activateOnItemClick
-                ? ListView.CHOICE_MODE_SINGLE
-                : ListView.CHOICE_MODE_NONE);
-    }
-
-    private void setActivatedPosition(int position) {
-        if (position == ListView.INVALID_POSITION) {
-            getListView().setItemChecked(mActivatedPosition, false);
-        } else {
-            getListView().setItemChecked(position, true);
-        }
-
-        mActivatedPosition = position;
     }
 
     @Override
