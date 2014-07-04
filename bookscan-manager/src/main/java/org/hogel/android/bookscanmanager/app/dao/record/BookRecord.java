@@ -23,7 +23,7 @@ public class BookRecord {
     @DatabaseField
     private String digest;
 
-    @DatabaseField
+    @DatabaseField(columnName = "image_url")
     private String imageUrl;
 
     public BookRecord(Book book) {
