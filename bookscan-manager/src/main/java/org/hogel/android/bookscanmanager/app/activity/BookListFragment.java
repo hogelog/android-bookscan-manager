@@ -213,7 +213,7 @@ public class BookListFragment extends RoboListFragment {
     private void setProgress(boolean isProgress) {
         final ActionBarActivity activity = (ActionBarActivity) getActivity();
         if (activity != null) {
-            activity.setSupportProgressBarIndeterminate(isProgress);
+            activity.setSupportProgressBarIndeterminateVisibility(isProgress);
         }
     }
 }

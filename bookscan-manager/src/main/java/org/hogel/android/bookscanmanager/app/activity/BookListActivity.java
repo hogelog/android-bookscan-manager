@@ -11,6 +11,7 @@ public class BookListActivity extends RoboActionBarActivity {
         super.onCreate(savedInstanceState);
 
         supportRequestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+        setSupportProgressBarIndeterminate(true);
 
         setContentView(R.layout.activity_book_list);
     }
