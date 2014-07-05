@@ -5,17 +5,21 @@
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:paddingTop="@dimen/common_list_padding"
+        android:paddingBottom="@dimen/common_list_padding"
         >
     <ImageView
             android:id="@+id/book_thumbnail"
+            android:src="@color/light_gray"
             android:layout_width="@dimen/book_list_thumbnail_width"
-            android:layout_height="wrap_content"
-            android:visibility="gone"
+            android:layout_height="@dimen/book_list_thumbnail_height"
+            android:layout_marginRight="2dp"
             />
     <TextView
             android:id="@+id/book_title"
             android:layout_weight="1"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:text="書籍タイトル"
             />
 </LinearLayout>

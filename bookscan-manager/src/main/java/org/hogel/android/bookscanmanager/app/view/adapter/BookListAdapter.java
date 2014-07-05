@@ -28,8 +28,7 @@ public class BookListAdapter extends ArrayAdapter<Book> {
 
         String imageUrl = book.getImageUrl();
         if (!TextUtils.isEmpty(imageUrl)) {
-            final ImageView bookThumbnailView = (ImageView) view.findViewById(R.id.book_thumbnail);
-            bookThumbnailView.setVisibility(View.VISIBLE);
+            ImageView bookThumbnailView = (ImageView) view.findViewById(R.id.book_thumbnail);
             Picasso.with(getContext()).load(imageUrl).into(bookThumbnailView);
         }
 

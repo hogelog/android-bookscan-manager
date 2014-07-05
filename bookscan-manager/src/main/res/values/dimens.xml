@@ -1,6 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <dimen name="common_list_padding">2dp</dimen>
+
     <!-- BookList -->
-    <dimen name="book_list_thumbnail_width">60dp</dimen>
+    <dimen name="book_list_thumbnail_width">56dp</dimen>
+    <dimen name="book_list_thumbnail_height">80dp</dimen>
+
+    <!-- BookDetail -->
+    <dimen name="book_detail_image_width">112dp</dimen>
+    <dimen name="book_detail_image_height">160dp</dimen>
 
 </resources>
