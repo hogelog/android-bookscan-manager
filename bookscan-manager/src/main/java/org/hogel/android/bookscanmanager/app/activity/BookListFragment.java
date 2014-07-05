@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
+import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -126,6 +127,8 @@ public class BookListFragment extends RoboListFragment {
                     if (preferences.hasLoginPreference()) {
                         final String loginMail = preferences.getLoginMail();
                         final String loginPass = preferences.getLoginPass();
+
+                        setProgress(true);
                         client.login(loginMail, loginPass, new LoginListener() {
                             @Override
                             public void onSuccess() {
@@ -152,16 +155,22 @@ public class BookListFragment extends RoboListFragment {
 
     @Subscribe
     public void loginSuccess(LoginEvent.Success success) {
+        setProgress(false);
+
         preferences.putCookies(client.getCookies());
         syncBookList();
     }
 
     @Subscribe
     public void loginFailure(LoginEvent.Failure failure) {
+        setProgress(false);
+
         Toasts.show(context, R.string.action_login_fail);
     }
 
     private void syncBookList() {
+        setProgress(true);
+
         client.fetchBooks(new FetchBooksListener() {
             @Override
             public void onSuccess(List<Book> fetchBooks) {
@@ -178,6 +187,8 @@ public class BookListFragment extends RoboListFragment {
 
     @Subscribe
     public void syncBooksSuccess(SyncBooksEvent.Success success) {
+        setProgress(false);
+
         try {
             databaseHelper.clearTable(BookRecord.class);
             for (Book book : success.getBooks()) {
@@ -194,6 +205,15 @@ public class BookListFragment extends RoboListFragment {
 
     @Subscribe
     public void syncBooksFailure(SyncBooksEvent.Failure failure) {
+        setProgress(false);
+
         Toasts.show(context, R.string.action_sync_fail);
+    }
+
+    private void setProgress(boolean isProgress) {
+        final ActionBarActivity activity = (ActionBarActivity) getActivity();
+        if (activity != null) {
+            activity.setSupportProgressBarIndeterminate(isProgress);
+        }
     }
 }
