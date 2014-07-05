@@ -1,5 +1,6 @@
 package org.hogel.android.bookscanmanager.app.activity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
@@ -18,6 +19,11 @@ import roboguice.activity.RoboFragmentActivity;
  * more than a {@link BookDetailFragment}.
  */
 public class BookDetailActivity extends RoboFragmentActivity {
+    public static Intent createIntent(Context context, String filename) {
+        Intent intent = new Intent(context, BookDetailActivity.class);
+        intent.putExtra(BookDetailFragment.ARG_ITEM_ID, filename);
+        return intent;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

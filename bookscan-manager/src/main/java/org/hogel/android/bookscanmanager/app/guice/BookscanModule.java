@@ -5,6 +5,7 @@ import android.app.Service;
 import android.content.Context;
 import com.google.inject.Binder;
 import com.google.inject.Module;
+import org.hogel.bookscan.AsyncBookscanClient;
 import roboguice.inject.ContextSingleton;
 
 import javax.inject.Inject;
@@ -14,6 +15,7 @@ public class BookscanModule implements Module {
     @Override
     public void configure(Binder binder) {
         binder.bind(DownloadManager.class).toProvider(DownloadManagerProvider.class);
+        binder.bind(AsyncBookscanClient.class).toInstance(new AsyncBookscanClient());
     }
 
     @ContextSingleton

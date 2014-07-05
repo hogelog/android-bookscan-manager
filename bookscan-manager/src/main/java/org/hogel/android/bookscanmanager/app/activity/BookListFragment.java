@@ -1,14 +1,13 @@
 package org.hogel.android.bookscanmanager.app.activity;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarActivity;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
-import android.view.View;
+import android.view.*;
+import android.widget.AbsListView;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import com.google.common.collect.Lists;
@@ -30,12 +29,13 @@ import org.hogel.bookscan.listener.LoginListener;
 import org.hogel.bookscan.model.Book;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import roboguice.fragment.RoboListFragment;
+import roboguice.fragment.RoboFragment;
+import roboguice.inject.InjectView;
 
 import java.sql.SQLException;
 import java.util.List;
 
-public class BookListFragment extends RoboListFragment {
+public class BookListFragment extends RoboFragment {
     private static final Logger LOG = LoggerFactory.getLogger(BookListFragment.class);
 
     @Inject
@@ -54,6 +54,12 @@ public class BookListFragment extends RoboListFragment {
 
     @Inject
     private Preferences preferences;
+
+    @InjectView(R.id.swipe_container)
+    private SwipeRefreshLayout swipeContainer;
+
+    @InjectView(R.id.book_list)
+    private ListView bookListView;
 
     private Dao<BookRecord, String> bookDao;
 
@@ -92,19 +98,51 @@ public class BookListFragment extends RoboListFragment {
         }
 
         booksAdapter = new BookListAdapter(context, books);
-        setListAdapter(booksAdapter);
 
         setHasOptionsMenu(true);
     }
 
     @Override
-    public void onListItemClick(ListView listView, View view, int position, long id) {
-        super.onListItemClick(listView, view, position, id);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.fragment_book_list, container, false);
+    }
 
-        String filename = books.get(position).getFilename();
-        Intent detailIntent = new Intent(getActivity(), BookDetailActivity.class);
-        detailIntent.putExtra(BookDetailFragment.ARG_ITEM_ID, filename);
-        startActivity(detailIntent);
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        bookListView.setAdapter(booksAdapter);
+        bookListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                String filename = books.get(position).getFilename();
+                startActivity(BookDetailActivity.createIntent(context, filename));
+            }
+        });
+        bookListView.setOnScrollListener(new AbsListView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
+            }
+
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+                int topRowVerticalPosition;
+                if (bookListView.getChildCount() == 0) {
+                    topRowVerticalPosition = 0;
+                } else {
+                    topRowVerticalPosition = bookListView.getChildAt(0).getTop();
+                }
+                swipeContainer.setEnabled(topRowVerticalPosition >= 0);
+            }
+        });
+
+        swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                swipeContainer.setRefreshing(false);
+                loginAndSyncBookList();
+            }
+        });
     }
 
     @Override
@@ -120,34 +158,38 @@ public class BookListFragment extends RoboListFragment {
                 loginDialogFragment.show();
                 return true;
             case R.id.action_sync:
-                if (!client.isLogin()) {
-                    if (preferences.hasLoginPreference()) {
-                        final String loginMail = preferences.getLoginMail();
-                        final String loginPass = preferences.getLoginPass();
-
-                        setProgress(true);
-                        client.login(loginMail, loginPass, new LoginListener() {
-                            @Override
-                            public void onSuccess() {
-                                BusProvider.post(LoginEvent.success(loginMail, loginPass));
-                            }
-
-                            @Override
-                            public void onError(Exception e) {
-                                LOG.error(e.getMessage(), e);
-                                BusProvider.post(LoginEvent.failure());
-                            }
-                        });
-                    } else {
-                        loginDialogFragment.show();
-                    }
-                } else {
-                    syncBookList();
-                }
+                loginAndSyncBookList();
                 return true;
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void loginAndSyncBookList() {
+        if (!client.isLogin()) {
+            if (preferences.hasLoginPreference()) {
+                final String loginMail = preferences.getLoginMail();
+                final String loginPass = preferences.getLoginPass();
+
+                setProgress(true);
+                client.login(loginMail, loginPass, new LoginListener() {
+                    @Override
+                    public void onSuccess() {
+                        BusProvider.post(LoginEvent.success(loginMail, loginPass));
+                    }
+
+                    @Override
+                    public void onError(Exception e) {
+                        LOG.error(e.getMessage(), e);
+                        BusProvider.post(LoginEvent.failure());
+                    }
+                });
+            } else {
+                loginDialogFragment.show();
+            }
+        } else {
+            syncBookList();
+        }
     }
 
     @Subscribe
