@@ -46,6 +46,7 @@ public class BookListFragment extends RoboFragment {
 
     @Inject
     private FragmentManager fragmentManager;
+
     @Inject
     private LoginDialogFragment loginDialogFragment;
 
@@ -98,8 +99,6 @@ public class BookListFragment extends RoboFragment {
         }
 
         booksAdapter = new BookListAdapter(context, books);
-
-        setHasOptionsMenu(true);
     }
 
     @Override
@@ -143,26 +142,6 @@ public class BookListFragment extends RoboFragment {
                 loginAndSyncBookList();
             }
         });
-    }
-
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater menuInflater) {
-        menuInflater.inflate(R.menu.actions_book_list, menu);
-        super.onCreateOptionsMenu(menu, menuInflater);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_login:
-                loginDialogFragment.show();
-                return true;
-            case R.id.action_sync:
-                loginAndSyncBookList();
-                return true;
-        }
-
-        return super.onOptionsItemSelected(item);
     }
 
     private void loginAndSyncBookList() {
