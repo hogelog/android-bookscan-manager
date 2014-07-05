@@ -23,6 +23,7 @@ import org.hogel.android.bookscanmanager.app.event.SyncBooksEvent;
 import org.hogel.android.bookscanmanager.app.util.BusProvider;
 import org.hogel.android.bookscanmanager.app.util.Preferences;
 import org.hogel.android.bookscanmanager.app.util.Toasts;
+import org.hogel.android.bookscanmanager.app.view.adapter.BookListAdapter;
 import org.hogel.bookscan.AsyncBookscanClient;
 import org.hogel.bookscan.listener.FetchBooksListener;
 import org.hogel.bookscan.listener.LoginListener;
@@ -90,11 +91,7 @@ public class BookListFragment extends RoboListFragment {
             LOG.error(e.getMessage(), e);
         }
 
-        booksAdapter = new ArrayAdapter<>(
-            context,
-            android.R.layout.simple_list_item_activated_1,
-            android.R.id.text1,
-            books);
+        booksAdapter = new BookListAdapter(context, books);
         setListAdapter(booksAdapter);
 
         setHasOptionsMenu(true);

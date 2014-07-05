@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- BookList -->
+    <dimen name="book_list_thumbnail_width">60dp</dimen>
+
+</resources>
