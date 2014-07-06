@@ -25,6 +25,7 @@ import org.hogel.android.bookscanmanager.app.util.BusProvider;
 import org.hogel.android.bookscanmanager.app.util.Preferences;
 import org.hogel.android.bookscanmanager.app.util.Toasts;
 import org.hogel.android.bookscanmanager.app.view.adapter.BookListAdapter;
+import org.hogel.android.bookscanmanager.app.view.adapter.ListScrollAdapter;
 import org.hogel.bookscan.AsyncBookscanClient;
 import org.hogel.bookscan.listener.FetchBooksListener;
 import org.hogel.bookscan.model.Book;
@@ -118,11 +119,7 @@ public class BookListFragment extends BookListTabFragment {
                 startActivity(BookDetailActivity.createIntent(context, filename));
             }
         });
-        bookListView.setOnScrollListener(new AbsListView.OnScrollListener() {
-            @Override
-            public void onScrollStateChanged(AbsListView view, int scrollState) {
-            }
-
+        bookListView.setOnScrollListener(new ListScrollAdapter() {
             @Override
             public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
                 int topRowVerticalPosition;
@@ -139,20 +136,17 @@ public class BookListFragment extends BookListTabFragment {
             @Override
             public void onRefresh() {
                 swipeContainer.setRefreshing(false);
-                loginAndSyncBookList();
+                syncBookList();
             }
         });
     }
 
-    private void loginAndSyncBookList() {
+    private void syncBookList() {
         if (!client.isLogin()) {
             loginDialogFragment.show();
-        } else {
-            syncBookList();
+            return;
         }
-    }
 
-    private void syncBookList() {
         setProgress(true);
 
         client.fetchBooks(new FetchBooksListener() {
