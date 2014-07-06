@@ -20,7 +20,6 @@ import org.hogel.android.bookscanmanager.app.R;
 import org.hogel.android.bookscanmanager.app.activity.BookDetailActivity;
 import org.hogel.android.bookscanmanager.app.dao.DatabaseHelper;
 import org.hogel.android.bookscanmanager.app.dao.record.BookRecord;
-import org.hogel.android.bookscanmanager.app.event.LoginEvent;
 import org.hogel.android.bookscanmanager.app.event.SyncBooksEvent;
 import org.hogel.android.bookscanmanager.app.util.BusProvider;
 import org.hogel.android.bookscanmanager.app.util.Preferences;
@@ -28,7 +27,6 @@ import org.hogel.android.bookscanmanager.app.util.Toasts;
 import org.hogel.android.bookscanmanager.app.view.adapter.BookListAdapter;
 import org.hogel.bookscan.AsyncBookscanClient;
 import org.hogel.bookscan.listener.FetchBooksListener;
-import org.hogel.bookscan.listener.LoginListener;
 import org.hogel.bookscan.model.Book;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -148,44 +146,10 @@ public class BookListFragment extends BookListTabFragment {
 
     private void loginAndSyncBookList() {
         if (!client.isLogin()) {
-            if (preferences.hasLoginPreference()) {
-                final String loginMail = preferences.getLoginMail();
-                final String loginPass = preferences.getLoginPass();
-
-                setProgress(true);
-                client.login(loginMail, loginPass, new LoginListener() {
-                    @Override
-                    public void onSuccess() {
-                        BusProvider.post(LoginEvent.success(loginMail, loginPass));
-                    }
-
-                    @Override
-                    public void onError(Exception e) {
-                        LOG.error(e.getMessage(), e);
-                        BusProvider.post(LoginEvent.failure());
-                    }
-                });
-            } else {
-                loginDialogFragment.show();
-            }
+            loginDialogFragment.show();
         } else {
             syncBookList();
         }
-    }
-
-    @Subscribe
-    public void loginSuccess(LoginEvent.Success success) {
-        setProgress(false);
-
-        preferences.putCookies(client.getCookies());
-        syncBookList();
-    }
-
-    @Subscribe
-    public void loginFailure(LoginEvent.Failure failure) {
-        setProgress(false);
-
-        Toasts.show(context, R.string.action_login_fail);
     }
 
     private void syncBookList() {

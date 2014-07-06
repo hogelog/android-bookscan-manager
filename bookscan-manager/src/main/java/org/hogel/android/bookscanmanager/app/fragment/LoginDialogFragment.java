@@ -31,18 +31,23 @@ public class LoginDialogFragment extends RoboDialogFragment implements View.OnCl
     @Inject
     private Preferences preferences;
 
-    @InjectView(R.id.loginButton)
-    private Button loginButton;
-    @InjectView(R.id.loginMailEdit)
-    private TextView loginMailEdit;
-    @InjectView(R.id.loginPassEdit)
-    private TextView loginPassEdit;
-
     @Inject
-    AsyncBookscanClient client;
+    private AsyncBookscanClient client;
 
     @Inject
     private FragmentManager fragmentManager;
+
+    @InjectView(R.id.loginButton)
+    private Button loginButton;
+
+    @InjectView(R.id.loginMailEdit)
+    private TextView loginMailEdit;
+
+    @InjectView(R.id.loginPassEdit)
+    private TextView loginPassEdit;
+
+    @InjectView(R.id.progress_layout)
+    private View progressLayout;
 
     @Override
     public void onResume() {
@@ -74,6 +79,7 @@ public class LoginDialogFragment extends RoboDialogFragment implements View.OnCl
     public void onClick(View v) {
         final String loginMail = loginMailEdit.getText().toString();
         final String loginPass = loginPassEdit.getText().toString();
+        progressLayout.setVisibility(View.VISIBLE);
         client.login(loginMail, loginPass, new LoginListener() {
             @Override
             public void onSuccess() {
@@ -89,6 +95,7 @@ public class LoginDialogFragment extends RoboDialogFragment implements View.OnCl
 
     @Subscribe
     public void loginSuccess(LoginEvent.Success success) {
+        progressLayout.setVisibility(View.GONE);
         preferences.putLoginPreference(success.getLoginMail(), success.getLoginPass());
         preferences.putCookies(client.getCookies());
         Toasts.show(getActivity(), R.string.action_login_success);
@@ -97,6 +104,7 @@ public class LoginDialogFragment extends RoboDialogFragment implements View.OnCl
 
     @Subscribe
     public void loginFailure(LoginEvent.Failure failure) {
+        progressLayout.setVisibility(View.GONE);
         Toasts.show(getActivity(), R.string.action_login_fail);
     }
 
