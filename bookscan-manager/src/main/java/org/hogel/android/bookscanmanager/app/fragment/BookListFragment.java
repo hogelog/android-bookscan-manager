@@ -1,11 +1,13 @@
-package org.hogel.android.bookscanmanager.app.activity;
+package org.hogel.android.bookscanmanager.app.fragment;
 
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarActivity;
-import android.view.*;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -15,6 +17,7 @@ import com.google.inject.Inject;
 import com.j256.ormlite.dao.Dao;
 import com.squareup.otto.Subscribe;
 import org.hogel.android.bookscanmanager.app.R;
+import org.hogel.android.bookscanmanager.app.activity.BookDetailActivity;
 import org.hogel.android.bookscanmanager.app.dao.DatabaseHelper;
 import org.hogel.android.bookscanmanager.app.dao.record.BookRecord;
 import org.hogel.android.bookscanmanager.app.event.LoginEvent;
@@ -29,13 +32,12 @@ import org.hogel.bookscan.listener.LoginListener;
 import org.hogel.bookscan.model.Book;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import roboguice.fragment.RoboFragment;
 import roboguice.inject.InjectView;
 
 import java.sql.SQLException;
 import java.util.List;
 
-public class BookListFragment extends RoboFragment {
+public class BookListFragment extends BookListTabFragment {
     private static final Logger LOG = LoggerFactory.getLogger(BookListFragment.class);
 
     @Inject
@@ -79,7 +81,7 @@ public class BookListFragment extends RoboFragment {
 
     @Override
     public void onPause() {
-        BusProvider.register(this);
+        BusProvider.unregister(this);
         super.onPause();
     }
 

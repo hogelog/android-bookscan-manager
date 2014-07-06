@@ -1,4 +1,4 @@
-package org.hogel.android.bookscanmanager.app.activity;
+package org.hogel.android.bookscanmanager.app.fragment;
 
 import com.google.inject.Inject;
 
@@ -52,7 +52,7 @@ public class LoginDialogFragment extends RoboDialogFragment implements View.OnCl
 
     @Override
     public void onPause() {
-        BusProvider.register(this);
+        BusProvider.unregister(this);
         super.onPause();
     }
 

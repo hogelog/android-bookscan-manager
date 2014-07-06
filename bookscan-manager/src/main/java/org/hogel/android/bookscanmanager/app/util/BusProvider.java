@@ -20,6 +20,14 @@ public class BusProvider {
         BUS.register(fragment);
     }
 
+    public static void unregister(Activity activity) {
+        BUS.unregister(activity);
+    }
+
+    public static void unregister(Fragment fragment) {
+        BUS.unregister(fragment);
+    }
+
     public static void post(final Object event) {
         HANDLER.post(new Runnable() {
             @Override

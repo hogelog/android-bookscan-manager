@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.view.MenuItem;
 import org.hogel.android.bookscanmanager.app.R;
+import org.hogel.android.bookscanmanager.app.fragment.BookDetailFragment;
 import roboguice.activity.RoboFragmentActivity;
 
 

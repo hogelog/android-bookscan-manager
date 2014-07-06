@@ -22,4 +22,7 @@
     <string name="login_title">BOOKSCANログイン</string>
 
     <string name="error_network">ネットワークエラー</string>
+    
+    <string name="book_list_tab_books">書籍</string>
+    <string name="book_list_tab_optimized_books">チューニング済み</string>
 </resources>
