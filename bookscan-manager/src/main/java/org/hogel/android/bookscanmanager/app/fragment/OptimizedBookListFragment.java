@@ -12,10 +12,9 @@ import android.widget.AbsListView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import com.google.inject.Inject;
-import com.j256.ormlite.dao.Dao;
 import com.squareup.otto.Subscribe;
 import org.hogel.android.bookscanmanager.app.R;
-import org.hogel.android.bookscanmanager.app.dao.DatabaseHelper;
+import org.hogel.android.bookscanmanager.app.dao.OptimizedBookDaoHelper;
 import org.hogel.android.bookscanmanager.app.dao.record.OptimizedBookRecord;
 import org.hogel.android.bookscanmanager.app.event.SyncOptimizedBooksEvent;
 import org.hogel.android.bookscanmanager.app.util.BusProvider;
@@ -50,18 +49,16 @@ public class OptimizedBookListFragment extends BookListTabFragment {
     private LoginDialogFragment loginDialogFragment;
 
     @Inject
-    private DatabaseHelper databaseHelper;
+    private Preferences preferences;
 
     @Inject
-    private Preferences preferences;
+    private OptimizedBookDaoHelper bookDaoHelper;
 
     @InjectView(R.id.swipe_container)
     private SwipeRefreshLayout swipeContainer;
 
     @InjectView(R.id.book_list)
     private ListView bookListView;
-
-    private Dao<OptimizedBookRecord, String> bookDao;
 
     private final List<OptimizedBook> books = new ArrayList<>();
 
@@ -86,10 +83,8 @@ public class OptimizedBookListFragment extends BookListTabFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        bookDao = databaseHelper.getOptimizedBookDao();
-
         try {
-            List<OptimizedBookRecord> bookRecords = bookDao.queryForAll();
+            List<OptimizedBookRecord> bookRecords = bookDaoHelper.dao().queryForAll();
             for (OptimizedBookRecord bookRecord : bookRecords) {
                 books.add(bookRecord.toOptimizedBook());
             }
@@ -160,9 +155,9 @@ public class OptimizedBookListFragment extends BookListTabFragment {
         setProgress(false);
 
         try {
-            databaseHelper.clearTable(OptimizedBookRecord.class);
+            bookDaoHelper.clear();
             for (OptimizedBook book : success.getBooks()) {
-                bookDao.create(new OptimizedBookRecord(book));
+                bookDaoHelper.dao().create(new OptimizedBookRecord(book));
             }
             books.clear();
             books.addAll(success.getBooks());

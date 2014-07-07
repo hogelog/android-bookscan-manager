@@ -5,10 +5,8 @@ import android.database.sqlite.SQLiteDatabase;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
-import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
-import lombok.Getter;
 import org.hogel.android.bookscanmanager.app.dao.record.BookRecord;
 import org.hogel.android.bookscanmanager.app.dao.record.OptimizedBookRecord;
 import org.slf4j.Logger;
@@ -22,12 +20,6 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 
     private static final String DATABASE_NAME = "bookscan.db";
     private static final int DATABASE_VERSION = 3;
-
-    @Getter
-    private Dao<BookRecord, String> bookDao;
-
-    @Getter
-    private Dao<OptimizedBookRecord, String> optimizedBookDao;
 
     @Inject
     public DatabaseHelper(Context context) {
@@ -56,20 +48,6 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
             LOG.error(e.getMessage(), e);
             throw new RuntimeException(e);
         }
-    }
-
-    @Override
-    public void onOpen(SQLiteDatabase db) {
-        try {
-            bookDao = getDao(BookRecord.class);
-            optimizedBookDao = getDao(OptimizedBookRecord.class);
-        } catch (SQLException e) {
-            LOG.error(e.getMessage(), e);
-            throw new RuntimeException(e);
-        }
-    }
-
-    public void clearBookDao() throws SQLException {
     }
 
     public void clearTable(Class<?> recordClass) throws SQLException {
