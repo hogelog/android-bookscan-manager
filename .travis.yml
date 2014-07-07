@@ -6,10 +6,5 @@ android:
   licenses:
     - android-sdk-license-5be876d5
 
-env:
-  global:
-    - DEPLOYGATE_USER=hogelog
-    - secure: "QudRNMIcWA07FRQpQLD2ycE91iGx45hiFKShS8bD6s9KVG49cSHYIQmM+xNSWxhlCkE3fVB1t7A6pT0Fm9L42bZD1hl8uBv9mGRSPAAPu3dBlgtbAVXDnI/1bQ7BXq12pSXGDxuzaxoLzgatGU8lhQE25Y9gpTBBWvxhIxGT3xQ="
-
 script:
-  - ./gradlew uploadDeployGateDebug
+  - ./gradlew check
