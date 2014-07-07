@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import com.google.inject.Inject;
 import com.j256.ormlite.dao.Dao;
 import com.squareup.picasso.Picasso;
 import org.hogel.android.bookscanmanager.app.R;
@@ -20,7 +21,6 @@ import org.slf4j.LoggerFactory;
 import roboguice.fragment.RoboFragment;
 import roboguice.inject.InjectView;
 
-import javax.inject.Inject;
 import java.sql.SQLException;
 
 public class BookDetailFragment extends RoboFragment implements View.OnClickListener {

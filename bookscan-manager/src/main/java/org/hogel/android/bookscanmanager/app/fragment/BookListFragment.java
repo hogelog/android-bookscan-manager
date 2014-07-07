@@ -1,10 +1,10 @@
 package org.hogel.android.bookscanmanager.app.fragment;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.ActionBarActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -189,9 +189,9 @@ public class BookListFragment extends BookListTabFragment {
     }
 
     private void setProgress(boolean isProgress) {
-        final ActionBarActivity activity = (ActionBarActivity) getActivity();
+        Activity activity = getActivity();
         if (activity != null) {
-            activity.setSupportProgressBarIndeterminateVisibility(isProgress);
+            activity.setProgressBarIndeterminateVisibility(isProgress);
         }
     }
 }

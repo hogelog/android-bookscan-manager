@@ -2,6 +2,8 @@ package org.hogel.android.bookscanmanager.app.dao;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.support.ConnectionSource;
@@ -12,8 +14,6 @@ import org.hogel.android.bookscanmanager.app.dao.record.OptimizedBookRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
 import java.sql.SQLException;
 
 @Singleton

@@ -1,10 +1,9 @@
 package org.hogel.android.bookscanmanager.app.activity;
 
+import android.app.ActionBar;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.ActionBar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.Window;
@@ -14,10 +13,11 @@ import org.hogel.android.bookscanmanager.app.fragment.LoginDialogFragment;
 import org.hogel.android.bookscanmanager.app.view.adapter.ActionBarTabAdapter;
 import org.hogel.android.bookscanmanager.app.view.adapter.BookListTabPagerAdapter;
 import org.hogel.android.bookscanmanager.app.view.adapter.ViewPagerPageChangeAdapter;
+import roboguice.activity.RoboFragmentActivity;
 import roboguice.inject.InjectView;
 
 
-public class BookListActivity extends RoboActionBarActivity {
+public class BookListActivity extends RoboFragmentActivity {
     private static final int[] BOOK_LIST_TAB_NAMES = new int[] {
         R.string.book_list_tab_books,
         R.string.book_list_tab_optimized_books,
@@ -39,8 +39,8 @@ public class BookListActivity extends RoboActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        supportRequestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
-        setSupportProgressBarIndeterminate(true);
+        requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+        setProgressBarIndeterminate(true);
 
         setContentView(R.layout.activity_book_list);
 
@@ -50,13 +50,13 @@ public class BookListActivity extends RoboActionBarActivity {
     private void setupViewPager() {
         viewPager.setAdapter(bookListTabPagerAdapter);
 
-        final ActionBar actionBar = getSupportActionBar();
+        final ActionBar actionBar = getActionBar();
         actionBar.setHomeButtonEnabled(false);
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 
         ActionBar.TabListener tabListener = new ActionBarTabAdapter() {
             @Override
-            public void onTabSelected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
+            public void onTabSelected(ActionBar.Tab tab, android.app.FragmentTransaction ft) {
                 viewPager.setCurrentItem(tab.getPosition());
             }
         };

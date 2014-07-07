@@ -1,18 +1,14 @@
 package org.hogel.android.bookscanmanager.app.util;
 
+import android.content.SharedPreferences;
 import com.google.common.collect.ImmutableMap;
 import com.google.inject.Inject;
-
 import net.arnx.jsonic.JSON;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import android.content.SharedPreferences;
+import roboguice.util.Strings;
 
 import java.util.Map;
-
-import roboguice.util.Strings;
 
 public class Preferences {
     private static final Logger LOG = LoggerFactory.getLogger(Preferences.class);
@@ -33,7 +29,7 @@ public class Preferences {
     }
 
     public void putLoginMail(String loginMail) {
-        preferences.edit().putString(LOGIN_MAIL, loginMail).commit();
+        preferences.edit().putString(LOGIN_MAIL, loginMail).apply();
     }
 
     public String getLoginPass() {
@@ -41,7 +37,7 @@ public class Preferences {
     }
 
     public void putLoginPass(String loginPass) {
-        preferences.edit().putString(LOGIN_PASS, loginPass).commit();
+        preferences.edit().putString(LOGIN_PASS, loginPass).apply();
     }
 
     public boolean hasLoginPreference() {
@@ -53,7 +49,7 @@ public class Preferences {
                 .edit()
                 .putString(LOGIN_MAIL, loginMail)
                 .putString(LOGIN_PASS, loginPass)
-                .commit();
+                .apply();
     }
 
     public Map<String, String> getCookies() {
@@ -66,6 +62,6 @@ public class Preferences {
 
     public void putCookies(Map<String, String> cookies) {
         String jsonCookies = JSON.encode(cookies);
-        preferences.edit().putString(COOKIES, jsonCookies).commit();
+        preferences.edit().putString(COOKIES, jsonCookies).apply();
     }
 }

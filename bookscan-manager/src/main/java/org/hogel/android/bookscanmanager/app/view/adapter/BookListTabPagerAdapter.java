@@ -5,14 +5,13 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import com.google.inject.Inject;
 import org.hogel.android.bookscanmanager.app.fragment.BookListFragment;
-import org.hogel.android.bookscanmanager.app.fragment.BookListTabFragment;
 import org.hogel.android.bookscanmanager.app.fragment.OptimizedBookListFragment;
 
 public class BookListTabPagerAdapter extends FragmentPagerAdapter {
     private static final int POSITION_BOOKS = 0;
     private static final int POSITION_OPTIMIZED_BOOKS = 1;
 
-    private static final Class<BookListTabFragment>[] FRAGMENT_CLASSES = new Class[]{
+    private static final Class[] FRAGMENT_CLASSES = new Class[]{
         BookListFragment.class,
         OptimizedBookListFragment.class,
     };

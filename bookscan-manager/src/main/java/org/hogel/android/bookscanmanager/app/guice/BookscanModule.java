@@ -3,15 +3,10 @@ package org.hogel.android.bookscanmanager.app.guice;
 import android.app.DownloadManager;
 import android.app.Service;
 import android.content.Context;
-import com.google.inject.Binder;
-import com.google.inject.Module;
-import com.google.inject.Singleton;
+import com.google.inject.*;
 import org.hogel.android.bookscanmanager.app.util.Preferences;
 import org.hogel.bookscan.AsyncBookscanClient;
 import roboguice.inject.ContextSingleton;
-
-import javax.inject.Inject;
-import javax.inject.Provider;
 
 public class BookscanModule implements Module {
     @Override
