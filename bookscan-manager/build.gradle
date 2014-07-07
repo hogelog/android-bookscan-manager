@@ -60,8 +60,8 @@ dependencies {
 
 
 deploygate {
-  userName = "$System.env.DEPLOYGATE_USER"
-  token = "$System.env.DEPLOYGATE_TOKEN"
+  userName = "$DEPLOYGATE_USER"
+  token = "$DEPLOYGATE_TOKEN"
 
   apks {
     debug {
