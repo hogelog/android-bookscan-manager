@@ -9,12 +9,10 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.google.inject.Inject;
-import com.j256.ormlite.dao.Dao;
 import com.squareup.picasso.Picasso;
 import org.hogel.android.bookscanmanager.app.R;
 import org.hogel.android.bookscanmanager.app.bookscan.BookscanDownloadManager;
-import org.hogel.android.bookscanmanager.app.dao.DatabaseHelper;
-import org.hogel.android.bookscanmanager.app.dao.record.BookRecord;
+import org.hogel.android.bookscanmanager.app.dao.BookDaoHelper;
 import org.hogel.bookscan.model.Book;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,7 +30,7 @@ public class BookDetailFragment extends RoboFragment implements View.OnClickList
     private BookscanDownloadManager downloadManager;
 
     @Inject
-    private DatabaseHelper databaseHelper;
+    private BookDaoHelper bookDaoHelper;
 
     @InjectView(R.id.book_title)
     private TextView bookTitleView;
@@ -43,18 +41,15 @@ public class BookDetailFragment extends RoboFragment implements View.OnClickList
     @InjectView(R.id.download_button)
     private Button downloadButton;
 
-    private Dao<BookRecord, String> bookDao;
-
     private Book book;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        bookDao = databaseHelper.getBookDao();
         if (getArguments().containsKey(ARG_ITEM_ID)) {
             try {
-                book = bookDao.queryForId(getArguments().getString(ARG_ITEM_ID)).toBook();
+                book = bookDaoHelper.dao().queryForId(getArguments().getString(ARG_ITEM_ID)).toBook();
             } catch (SQLException e) {
                 LOG.error(e.getMessage(), e);
             }
