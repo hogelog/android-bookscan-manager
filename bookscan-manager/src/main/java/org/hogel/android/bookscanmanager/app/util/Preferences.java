@@ -29,7 +29,7 @@ public class Preferences {
     }
 
     public void putLoginMail(String loginMail) {
-        preferences.edit().putString(LOGIN_MAIL, loginMail).apply();
+        preferences.edit().putString(LOGIN_MAIL, loginMail).commit();
     }
 
     public String getLoginPass() {
@@ -37,7 +37,7 @@ public class Preferences {
     }
 
     public void putLoginPass(String loginPass) {
-        preferences.edit().putString(LOGIN_PASS, loginPass).apply();
+        preferences.edit().putString(LOGIN_PASS, loginPass).commit();
     }
 
     public boolean hasLoginPreference() {
@@ -49,7 +49,7 @@ public class Preferences {
                 .edit()
                 .putString(LOGIN_MAIL, loginMail)
                 .putString(LOGIN_PASS, loginPass)
-                .apply();
+                .commit();
     }
 
     public Map<String, String> getCookies() {
@@ -62,6 +62,6 @@ public class Preferences {
 
     public void putCookies(Map<String, String> cookies) {
         String jsonCookies = JSON.encode(cookies);
-        preferences.edit().putString(COOKIES, jsonCookies).apply();
+        preferences.edit().putString(COOKIES, jsonCookies).commit();
     }
 }
