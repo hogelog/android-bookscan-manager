@@ -3,27 +3,28 @@ package org.hogel.android.bookscanmanager.app.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.NavUtils;
 import android.view.MenuItem;
+import com.google.inject.Inject;
 import org.hogel.android.bookscanmanager.app.R;
 import org.hogel.android.bookscanmanager.app.fragment.BookDetailFragment;
 import roboguice.activity.RoboFragmentActivity;
 
 
-/**
- * An activity representing a single Book detail screen. This
- * activity is only used on handset devices. On tablet-size devices,
- * item details are presented side-by-side with a list of items
- * in a {@link BookListActivity}.
- * <p>
- * This activity is mostly just a 'shell' activity containing nothing
- * more than a {@link BookDetailFragment}.
- */
 public class BookDetailActivity extends RoboFragmentActivity {
+
+    @Inject
+    private FragmentManager fragmentManager;
+
     public static Intent createIntent(Context context, String filename) {
         Intent intent = new Intent(context, BookDetailActivity.class);
         intent.putExtra(BookDetailFragment.ARG_ITEM_ID, filename);
         return intent;
+    }
+
+    private String getArgumentFilename() {
+        return getIntent().getStringExtra(BookDetailFragment.ARG_ITEM_ID);
     }
 
     @Override
@@ -31,29 +32,15 @@ public class BookDetailActivity extends RoboFragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_book_detail);
 
-        // Show the Up button in the action bar.
         getActionBar().setDisplayHomeAsUpEnabled(true);
 
-        // savedInstanceState is non-null when there is fragment state
-        // saved from previous configurations of this activity
-        // (e.g. when rotating the screen from portrait to landscape).
-        // In this case, the fragment will automatically be re-added
-        // to its container so we don't need to manually add it.
-        // For more information, see the Fragments API guide at:
-        //
-        // http://developer.android.com/guide/components/fragments.html
-        //
         if (savedInstanceState == null) {
-            // Create the detail fragment and add it to the activity
-            // using a fragment transaction.
-            Bundle arguments = new Bundle();
-            arguments.putString(BookDetailFragment.ARG_ITEM_ID,
-                    getIntent().getStringExtra(BookDetailFragment.ARG_ITEM_ID));
-            BookDetailFragment fragment = new BookDetailFragment();
-            fragment.setArguments(arguments);
-            getSupportFragmentManager().beginTransaction()
-                    .add(R.id.book_detail_container, fragment)
-                    .commit();
+            final String filename = getArgumentFilename();
+            BookDetailFragment fragment = BookDetailFragment.createFragment(filename);
+            fragmentManager
+                .beginTransaction()
+                .add(R.id.book_detail_container, fragment)
+                .commit();
         }
     }
 
@@ -61,13 +48,6 @@ public class BookDetailActivity extends RoboFragmentActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == android.R.id.home) {
-            // This ID represents the Home or Up button. In the case of this
-            // activity, the Up button is shown. Use NavUtils to allow users
-            // to navigate up one level in the application structure. For
-            // more details, see the Navigation pattern on Android Design:
-            //
-            // http://developer.android.com/design/patterns/navigation.html#up-vs-back
-            //
             NavUtils.navigateUpTo(this, new Intent(this, BookListActivity.class));
             return true;
         }

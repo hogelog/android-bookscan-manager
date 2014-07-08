@@ -1,6 +1,7 @@
 package org.hogel.android.bookscanmanager.app.fragment;
 
 import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,7 +22,7 @@ import roboguice.inject.InjectView;
 
 import java.sql.SQLException;
 
-public class BookDetailFragment extends RoboFragment implements View.OnClickListener {
+public class BookDetailFragment extends RoboFragment {
     private static final Logger LOG = LoggerFactory.getLogger(BookDetailFragment.class);
 
     public static final String ARG_ITEM_ID = "item_id";
@@ -31,6 +32,9 @@ public class BookDetailFragment extends RoboFragment implements View.OnClickList
 
     @Inject
     private BookDaoHelper bookDaoHelper;
+
+    @Inject
+    private FragmentManager fragmentManager;
 
     @InjectView(R.id.book_title)
     private TextView bookTitleView;
@@ -43,16 +47,26 @@ public class BookDetailFragment extends RoboFragment implements View.OnClickList
 
     private Book book;
 
+    public static BookDetailFragment createFragment(String filename) {
+        BookDetailFragment fragment = new BookDetailFragment();
+        Bundle args = new Bundle();
+        args.putString(ARG_ITEM_ID, filename);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    private String getArgumentFilename() {
+        return getArguments().getString(ARG_ITEM_ID);
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (getArguments().containsKey(ARG_ITEM_ID)) {
-            try {
-                book = bookDaoHelper.dao().queryForId(getArguments().getString(ARG_ITEM_ID)).toBook();
-            } catch (SQLException e) {
-                LOG.error(e.getMessage(), e);
-            }
+        try {
+            book = bookDaoHelper.dao().queryForId(getArgumentFilename()).toBook();
+        } catch (SQLException e) {
+            LOG.error(e.getMessage(), e);
         }
     }
 
@@ -73,16 +87,12 @@ public class BookDetailFragment extends RoboFragment implements View.OnClickList
                 Picasso.with(getActivity()).load(imageUrl).into(bookImageView);
             }
 
-            downloadButton.setOnClickListener(this);
-        }
-    }
-
-    @Override
-    public void onClick(final View v) {
-        switch (v.getId()) {
-            case R.id.download_button:
-                downloadManager.download(book);
-                break;
+            downloadButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    downloadManager.download(book);
+                }
+            });
         }
     }
 }
