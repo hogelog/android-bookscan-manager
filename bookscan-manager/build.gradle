@@ -58,10 +58,9 @@ dependencies {
     provided 'org.projectlombok:lombok:1.12.6'
 }
 
-
 deploygate {
-  userName = "$DEPLOYGATE_USER"
-  token = "$DEPLOYGATE_TOKEN"
+  userName = getProperty("DEPLOYGATE_USER", "")
+  token = getProperty("DEPLOYGATE_TOKEN", "")
 
   apks {
     debug {
@@ -71,3 +70,7 @@ deploygate {
 }
 
 uploadDeployGateDebug.dependsOn assembleDebug
+
+String getProperty(String propertyName, String defaultValue) {
+    hasProperty(propertyName) ? getProperty(propertyName) : defaultValue
+}
