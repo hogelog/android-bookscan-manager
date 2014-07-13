@@ -34,9 +34,37 @@
     </LinearLayout>
 
     <Button
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
         android:text="@string/action_download"
         android:id="@+id/download_button"
         />
+
+    <LinearLayout
+            android:id="@+id/optimized_books_container"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            >
+        <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/book_detail_optimized_books"
+                android:textStyle="bold"
+                />
+        <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/light_gray"
+                />
+        <LinearLayout
+                android:id="@+id/optimized_books_list"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                >
+        </LinearLayout>
+    </LinearLayout>
 </LinearLayout>

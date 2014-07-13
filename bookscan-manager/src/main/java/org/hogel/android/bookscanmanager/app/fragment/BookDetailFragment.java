@@ -14,13 +14,18 @@ import com.squareup.picasso.Picasso;
 import org.hogel.android.bookscanmanager.app.R;
 import org.hogel.android.bookscanmanager.app.bookscan.BookscanDownloadManager;
 import org.hogel.android.bookscanmanager.app.dao.BookDaoHelper;
+import org.hogel.android.bookscanmanager.app.dao.OptimizedBookDaoHelper;
+import org.hogel.android.bookscanmanager.app.dao.record.OptimizedBookRecord;
 import org.hogel.bookscan.model.Book;
+import org.hogel.bookscan.model.OptimizedBook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import roboguice.fragment.RoboFragment;
 import roboguice.inject.InjectView;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class BookDetailFragment extends RoboFragment {
     private static final Logger LOG = LoggerFactory.getLogger(BookDetailFragment.class);
@@ -34,6 +39,9 @@ public class BookDetailFragment extends RoboFragment {
     private BookDaoHelper bookDaoHelper;
 
     @Inject
+    private OptimizedBookDaoHelper optimizedBookDaoHelper;
+
+    @Inject
     private FragmentManager fragmentManager;
 
     @InjectView(R.id.book_title)
@@ -45,7 +53,15 @@ public class BookDetailFragment extends RoboFragment {
     @InjectView(R.id.download_button)
     private Button downloadButton;
 
+    @InjectView(R.id.optimized_books_container)
+    private View optimizedBooksContainer;
+
+    @InjectView(R.id.optimized_books_list)
+    private ViewGroup optimizedBooksList;
+
     private Book book;
+
+    private List<OptimizedBook> optimizedBooks = new ArrayList<>();
 
     public static BookDetailFragment createFragment(String filename) {
         BookDetailFragment fragment = new BookDetailFragment();
@@ -64,7 +80,14 @@ public class BookDetailFragment extends RoboFragment {
         super.onCreate(savedInstanceState);
 
         try {
-            book = bookDaoHelper.dao().queryForId(getArgumentFilename()).toBook();
+            String filename = getArgumentFilename();
+            book = bookDaoHelper.dao().queryForId(filename).toBook();
+            List<OptimizedBookRecord> optimizedBookRecords = optimizedBookDaoHelper.dao().queryForAll();
+            for (OptimizedBookRecord optimizedBookRecord : optimizedBookRecords) {
+                if (optimizedBookRecord.getFilename().endsWith(filename)) {
+                    optimizedBooks.add(optimizedBookRecord.toOptimizedBook());
+                }
+            }
         } catch (SQLException e) {
             LOG.error(e.getMessage(), e);
         }
@@ -72,7 +95,7 @@ public class BookDetailFragment extends RoboFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
-            Bundle savedInstanceState) {
+                             Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_book_detail, container, false);
     }
 
@@ -94,5 +117,23 @@ public class BookDetailFragment extends RoboFragment {
                 }
             });
         }
+
+        if (optimizedBooks.size() > 0) {
+            optimizedBooksContainer.setVisibility(View.VISIBLE);
+            for (OptimizedBook optimizedBook : optimizedBooks) {
+                LayoutInflater layoutInflater = getLayoutInflater(savedInstanceState);
+                View optimizedBookView = createOptimizedBookView(layoutInflater, optimizedBook);
+                optimizedBooksList.addView(optimizedBookView);
+            }
+        } else {
+            optimizedBooksContainer.setVisibility(View.GONE);
+        }
+    }
+
+    private View createOptimizedBookView(LayoutInflater layoutInflater, OptimizedBook optimizedBook) {
+        View optimizedBookView = layoutInflater.inflate(R.layout.book_detail_optimized_book_list_item, null);
+        TextView optimizedBookTitleView = (TextView) optimizedBookView.findViewById(R.id.book_title);
+        optimizedBookTitleView.setText(optimizedBook.getFilename());
+        return optimizedBookView;
     }
 }
