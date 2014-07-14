@@ -1,19 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="org.hogel.android.bookscanmanager.app" >
+<manifest
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        package="org.hogel.android.bookscanmanager.app"
+        >
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
-        android:name=".BookscanManagerApplication"
-        android:allowBackup="true"
-        android:icon="@drawable/ic_launcher"
-        android:label="@string/app_name"
-        android:theme="@style/AppTheme" >
+            android:name=".BookscanManagerApplication"
+            android:allowBackup="true"
+            android:icon="@drawable/ic_launcher"
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme"
+            >
         <activity
-            android:name=".activity.BookListActivity"
-            android:label="@string/app_name" >
+                android:name=".activity.BookListActivity"
+                android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -21,12 +24,12 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activity.BookDetailActivity"
-            android:label="@string/title_book_detail"
-            android:parentActivityName=".activity.BookListActivity" >
+                android:name=".activity.BookDetailActivity"
+                android:label="@string/title_book_detail"
+                android:parentActivityName=".activity.BookListActivity" >
             <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".BookListActivity" />
+                    android:name="android.support.PARENT_ACTIVITY"
+                    android:value=".BookListActivity" />
         </activity>
     </application>
 
