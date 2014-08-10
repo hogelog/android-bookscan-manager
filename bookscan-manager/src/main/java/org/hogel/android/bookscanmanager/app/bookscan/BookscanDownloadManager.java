@@ -7,6 +7,7 @@ import com.google.inject.Inject;
 import org.hogel.android.bookscanmanager.app.util.Cookies;
 import org.hogel.bookscan.BookscanClient;
 import org.hogel.bookscan.model.Book;
+import org.hogel.bookscan.model.OptimizedBook;
 
 public class BookscanDownloadManager {
     @Inject
@@ -21,10 +22,19 @@ public class BookscanDownloadManager {
 
     public void download(Book book) {
         String downloadUrl = book.createDownloadUrl();
-        final DownloadManager.Request downloadRequest = new DownloadManager.Request(Uri.parse(downloadUrl));
+        download(downloadUrl, book.getFilename());
+    }
+
+    public void download(OptimizedBook optimizedBook) {
+        String downloadUrl = optimizedBook.createDownloadUrl();
+        download(downloadUrl, optimizedBook.getFilename());
+    }
+
+    private void download(String url, String filename) {
+        final DownloadManager.Request downloadRequest = new DownloadManager.Request(Uri.parse(url));
         downloadRequest.addRequestHeader("Cookie", Cookies.pack(client.getCookies()));
         downloadRequest.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
-        downloadRequest.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, book.getFilename());
+        downloadRequest.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, filename);
 
         downloadManager.enqueue(downloadRequest);
     }

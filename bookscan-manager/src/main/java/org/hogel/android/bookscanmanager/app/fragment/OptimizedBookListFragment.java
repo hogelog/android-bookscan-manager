@@ -14,6 +14,7 @@ import android.widget.ListView;
 import com.google.inject.Inject;
 import com.squareup.otto.Subscribe;
 import org.hogel.android.bookscanmanager.app.R;
+import org.hogel.android.bookscanmanager.app.bookscan.BookscanDownloadManager;
 import org.hogel.android.bookscanmanager.app.dao.OptimizedBookDaoHelper;
 import org.hogel.android.bookscanmanager.app.dao.record.OptimizedBookRecord;
 import org.hogel.android.bookscanmanager.app.event.SyncOptimizedBooksEvent;
@@ -55,6 +56,9 @@ public class OptimizedBookListFragment extends BookListTabFragment {
     @Inject
     private OptimizedBookDaoHelper bookDaoHelper;
 
+    @Inject
+    private BookscanDownloadManager downloadManager;
+
     @InjectView(R.id.swipe_container)
     private SwipeRefreshLayout swipeContainer;
 
@@ -93,7 +97,7 @@ public class OptimizedBookListFragment extends BookListTabFragment {
             LOG.error(e.getMessage(), e);
         }
 
-        booksAdapter = new OptimizedBookListAdapter(context, books);
+        booksAdapter = new OptimizedBookListAdapter(context, books, downloadManager);
     }
 
     @Override

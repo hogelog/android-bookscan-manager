@@ -3,4 +3,12 @@
     <style name="AppTheme" parent="@android:style/Theme.Holo">
     </style>
 
+    <style name="Button" parent="android:Widget.Holo.Button">
+    </style>
+
+    <style name="SmallButton" parent="android:Widget.Holo.Button.Small">
+        <item name="android:textSize">12sp</item>
+        <item name="android:minHeight">32dip</item>
+    </style>
+
 </resources>

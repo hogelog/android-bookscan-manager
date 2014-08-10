@@ -130,10 +130,18 @@ public class BookDetailFragment extends RoboFragment {
         }
     }
 
-    private View createOptimizedBookView(LayoutInflater layoutInflater, OptimizedBook optimizedBook) {
+    private View createOptimizedBookView(LayoutInflater layoutInflater, final OptimizedBook optimizedBook) {
         View optimizedBookView = layoutInflater.inflate(R.layout.book_detail_optimized_book_list_item, null);
         TextView optimizedBookTitleView = (TextView) optimizedBookView.findViewById(R.id.book_title);
         optimizedBookTitleView.setText(optimizedBook.getFilename());
+
+        Button downloadButton = (Button) optimizedBookView.findViewById(R.id.download_button);
+        downloadButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                downloadManager.download(optimizedBook);
+            }
+        });
         return optimizedBookView;
     }
 }

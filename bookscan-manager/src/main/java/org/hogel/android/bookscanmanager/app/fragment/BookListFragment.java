@@ -113,8 +113,8 @@ public class BookListFragment extends BookListTabFragment {
         bookListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String filename = books.get(position).getFilename();
-                startActivity(BookDetailActivity.createIntent(context, filename));
+                Book book = books.get(position);
+                startActivity(BookDetailActivity.createIntent(context, book));
             }
         });
         bookListView.setOnScrollListener(new ListScrollAdapter() {

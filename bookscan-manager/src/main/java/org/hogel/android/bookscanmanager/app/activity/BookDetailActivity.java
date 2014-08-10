@@ -9,6 +9,7 @@ import android.view.MenuItem;
 import com.google.inject.Inject;
 import org.hogel.android.bookscanmanager.app.R;
 import org.hogel.android.bookscanmanager.app.fragment.BookDetailFragment;
+import org.hogel.bookscan.model.Book;
 import roboguice.activity.RoboFragmentActivity;
 
 
@@ -17,9 +18,9 @@ public class BookDetailActivity extends RoboFragmentActivity {
     @Inject
     private FragmentManager fragmentManager;
 
-    public static Intent createIntent(Context context, String filename) {
+    public static Intent createIntent(Context context, Book book) {
         Intent intent = new Intent(context, BookDetailActivity.class);
-        intent.putExtra(BookDetailFragment.ARG_ITEM_ID, filename);
+        intent.putExtra(BookDetailFragment.ARG_ITEM_ID, book.getFilename());
         return intent;
     }
 
