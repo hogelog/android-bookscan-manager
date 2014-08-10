@@ -21,6 +21,7 @@ public class BookListActivity extends RoboFragmentActivity {
     private static final int[] BOOK_LIST_TAB_NAMES = new int[] {
         R.string.book_list_tab_books,
         R.string.book_list_tab_optimized_books,
+        R.string.book_list_tab_optimizing_books,
     };
 
     @Inject

@@ -2,4 +2,6 @@
 <resources>
     <color name="light_gray">#CCCCCC</color>
     <color name="progress_background">#80ffffff</color>
+
+    <color name="badge_background">#222222</color>
 </resources>
