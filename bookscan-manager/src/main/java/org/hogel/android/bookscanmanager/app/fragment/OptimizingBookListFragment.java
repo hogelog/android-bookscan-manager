@@ -151,9 +151,13 @@ public class OptimizingBookListFragment extends RoboFragment {
         books.clear();
         books.addAll(success.getBooks());
         if (books.isEmpty()) {
-            noItemView.setVisibility(View.GONE);
+            if (bookListView.getHeaderViewsCount() == 0) {
+                bookListView.addHeaderView(noItemView);
+            }
         } else {
-            noItemView.setVisibility(View.VISIBLE);
+            if (bookListView.getHeaderViewsCount() > 0) {
+                bookListView.removeHeaderView(noItemView);
+            }
         }
         booksAdapter.notifyDataSetChanged();
     }
