@@ -1,18 +1,16 @@
 package org.hogel.android.bookscanmanager.app.bookscan;
 
-import com.google.inject.Inject;
-
-import org.hogel.android.bookscanmanager.app.util.Cookies;
-import org.hogel.bookscan.AsyncBookscanClient;
-import org.hogel.bookscan.model.Book;
-
 import android.app.DownloadManager;
 import android.net.Uri;
 import android.os.Environment;
+import com.google.inject.Inject;
+import org.hogel.android.bookscanmanager.app.util.Cookies;
+import org.hogel.bookscan.BookscanClient;
+import org.hogel.bookscan.model.Book;
 
 public class BookscanDownloadManager {
     @Inject
-    AsyncBookscanClient client;
+    BookscanClient client;
 
     @Inject
     DownloadManager downloadManager;

@@ -1,19 +1,5 @@
 package org.hogel.android.bookscanmanager.app.fragment;
 
-import com.google.inject.Inject;
-
-import com.squareup.otto.Subscribe;
-
-import org.hogel.android.bookscanmanager.app.R;
-import org.hogel.android.bookscanmanager.app.event.LoginEvent;
-import org.hogel.android.bookscanmanager.app.util.BusProvider;
-import org.hogel.android.bookscanmanager.app.util.Preferences;
-import org.hogel.android.bookscanmanager.app.util.Toasts;
-import org.hogel.bookscan.AsyncBookscanClient;
-import org.hogel.bookscan.listener.LoginListener;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.view.LayoutInflater;
@@ -21,7 +7,18 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
-
+import com.google.inject.Inject;
+import com.squareup.otto.Subscribe;
+import org.hogel.android.bookscanmanager.app.R;
+import org.hogel.android.bookscanmanager.app.event.LoginEvent;
+import org.hogel.android.bookscanmanager.app.util.BusProvider;
+import org.hogel.android.bookscanmanager.app.util.Preferences;
+import org.hogel.android.bookscanmanager.app.util.Toasts;
+import org.hogel.bookscan.BookscanClient;
+import org.hogel.bookscan.reqeust.RequestErrorListener;
+import org.hogel.bookscan.reqeust.RequestListener;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import roboguice.fragment.RoboDialogFragment;
 import roboguice.inject.InjectView;
 
@@ -32,7 +29,7 @@ public class LoginDialogFragment extends RoboDialogFragment implements View.OnCl
     private Preferences preferences;
 
     @Inject
-    private AsyncBookscanClient client;
+    private BookscanClient client;
 
     @Inject
     private FragmentManager fragmentManager;
@@ -80,17 +77,21 @@ public class LoginDialogFragment extends RoboDialogFragment implements View.OnCl
         final String loginMail = loginMailEdit.getText().toString();
         final String loginPass = loginPassEdit.getText().toString();
         progressLayout.setVisibility(View.VISIBLE);
-        client.login(loginMail, loginPass, new LoginListener() {
-            @Override
-            public void onSuccess() {
-                BusProvider.post(LoginEvent.success(loginMail, loginPass));
-            }
-
-            @Override
-            public void onError(Exception e) {
-                BusProvider.post(LoginEvent.failure());
-            }
-        });
+        client
+            .login(loginMail, loginPass)
+            .listener(new RequestListener<Void>() {
+                @Override
+                public void success(Void aVoid) {
+                    BusProvider.post(LoginEvent.success(loginMail, loginPass));
+                }
+            })
+            .error(new RequestErrorListener() {
+                @Override
+                public void error(Exception e) {
+                    BusProvider.post(LoginEvent.failure());
+                }
+            })
+            .execute();
     }
 
     @Subscribe

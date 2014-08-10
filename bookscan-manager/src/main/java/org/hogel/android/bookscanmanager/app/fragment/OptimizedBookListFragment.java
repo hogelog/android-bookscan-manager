@@ -22,9 +22,10 @@ import org.hogel.android.bookscanmanager.app.util.Preferences;
 import org.hogel.android.bookscanmanager.app.util.Toasts;
 import org.hogel.android.bookscanmanager.app.view.adapter.ListScrollAdapter;
 import org.hogel.android.bookscanmanager.app.view.adapter.OptimizedBookListAdapter;
-import org.hogel.bookscan.AsyncBookscanClient;
-import org.hogel.bookscan.listener.FetchOptimizedBooksListener;
+import org.hogel.bookscan.BookscanClient;
 import org.hogel.bookscan.model.OptimizedBook;
+import org.hogel.bookscan.reqeust.RequestErrorListener;
+import org.hogel.bookscan.reqeust.RequestListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import roboguice.inject.InjectView;
@@ -40,7 +41,7 @@ public class OptimizedBookListFragment extends BookListTabFragment {
     private Context context;
 
     @Inject
-    private AsyncBookscanClient client;
+    private BookscanClient client;
 
     @Inject
     private FragmentManager fragmentManager;
@@ -136,18 +137,22 @@ public class OptimizedBookListFragment extends BookListTabFragment {
 
         setProgress(true);
 
-        client.fetchOptimizedBooks(new FetchOptimizedBooksListener() {
-            @Override
-            public void onSuccess(List<OptimizedBook> optimizedBooks) {
-                BusProvider.post(SyncOptimizedBooksEvent.success(optimizedBooks));
-            }
-
-            @Override
-            public void onError(Exception e) {
-                LOG.error(e.getMessage(), e);
-                BusProvider.post(SyncOptimizedBooksEvent.failure());
-            }
-        });
+        client
+            .fetchOptimizedBooks()
+            .listener(new RequestListener<List<OptimizedBook>>() {
+                @Override
+                public void success(List<OptimizedBook> optimizedBooks) {
+                    BusProvider.post(SyncOptimizedBooksEvent.success(optimizedBooks));
+                }
+            })
+            .error(new RequestErrorListener() {
+                @Override
+                public void error(Exception e) {
+                    LOG.error(e.getMessage(), e);
+                    BusProvider.post(SyncOptimizedBooksEvent.failure());
+                }
+            })
+            .execute();
     }
 
     @Subscribe

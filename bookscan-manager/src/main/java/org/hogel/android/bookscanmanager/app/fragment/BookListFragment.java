@@ -25,9 +25,10 @@ import org.hogel.android.bookscanmanager.app.util.Preferences;
 import org.hogel.android.bookscanmanager.app.util.Toasts;
 import org.hogel.android.bookscanmanager.app.view.adapter.BookListAdapter;
 import org.hogel.android.bookscanmanager.app.view.adapter.ListScrollAdapter;
-import org.hogel.bookscan.AsyncBookscanClient;
-import org.hogel.bookscan.listener.FetchBooksListener;
+import org.hogel.bookscan.BookscanClient;
 import org.hogel.bookscan.model.Book;
+import org.hogel.bookscan.reqeust.RequestErrorListener;
+import org.hogel.bookscan.reqeust.RequestListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import roboguice.inject.InjectView;
@@ -38,11 +39,13 @@ import java.util.List;
 public class BookListFragment extends BookListTabFragment {
     private static final Logger LOG = LoggerFactory.getLogger(BookListFragment.class);
 
+    private static final int DEFAULT_TIMEOUT = 20000;
+
     @Inject
     private Context context;
 
     @Inject
-    private AsyncBookscanClient client;
+    private BookscanClient client;
 
     @Inject
     private FragmentManager fragmentManager;
@@ -144,18 +147,23 @@ public class BookListFragment extends BookListTabFragment {
 
         setProgress(true);
 
-        client.fetchBooks(new FetchBooksListener() {
-            @Override
-            public void onSuccess(List<Book> fetchBooks) {
-                BusProvider.post(SyncBooksEvent.success(fetchBooks));
-            }
-
-            @Override
-            public void onError(Exception e) {
-                LOG.error(e.getMessage(), e);
-                BusProvider.post(SyncBooksEvent.failure());
-            }
-        });
+        client
+            .fetchBooks()
+            .timeout(DEFAULT_TIMEOUT)
+            .listener(new RequestListener<List<Book>>() {
+                @Override
+                public void success(List<Book> books) {
+                    BusProvider.post(SyncBooksEvent.success(books));
+                }
+            })
+            .error(new RequestErrorListener() {
+                @Override
+                public void error(Exception e) {
+                    LOG.error(e.getMessage(), e);
+                    BusProvider.post(SyncBooksEvent.failure());
+                }
+            })
+            .execute();
     }
 
     @Subscribe

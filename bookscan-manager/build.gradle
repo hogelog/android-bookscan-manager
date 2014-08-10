@@ -1,6 +1,6 @@
 buildscript {
     repositories {
-        mavenCentral()
+        jcenter()
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:0.12.1'
@@ -11,8 +11,7 @@ apply plugin: 'com.android.application'
 apply plugin: 'deploygate'
 
 repositories {
-    mavenCentral()
-    maven { url 'https://oss.jfrog.org/oss-snapshot-local/' }
+    jcenter()
 }
 
 def revisionHash = ["sh",  "-c",  "cd ${project.rootDir} ; git rev-parse --short HEAD"].execute().in.text.trim()
@@ -43,7 +42,7 @@ android {
 
 dependencies {
     compile 'com.android.support:support-v4:19.1.0'
-    compile('org.hogel:bookscan-client:0.0.4-SNAPSHOT') {
+    compile('org.hogel:bookscan-client:0.0.5') {
         exclude module: 'httpclient'
     }
     compile 'org.roboguice:roboguice:2.0'
