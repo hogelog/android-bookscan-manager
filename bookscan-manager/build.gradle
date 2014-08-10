@@ -16,6 +16,8 @@ repositories {
 
 def revisionHash = ["sh",  "-c",  "cd ${project.rootDir} ; git rev-parse --short HEAD"].execute().in.text.trim()
 
+def releaseSigningProperties = "${System.env["HOME"]}/.gradle/signing/release.properties"
+
 android {
     compileSdkVersion 19
     buildToolsVersion "19.1.0"
@@ -32,10 +34,24 @@ android {
         targetCompatibility JavaVersion.VERSION_1_7
     }
 
+    signingConfigs {
+        release {
+            if (new File(releaseSigningProperties).exists()) {
+                Properties props = new Properties()
+                props.load(new FileInputStream(file(releaseSigningProperties)))
+                storeFile file(props['STORE_FILE'])
+                storePassword props['STORE_PASSWORD']
+                keyAlias props['KEY_ALIAS']
+                keyPassword props['KEY_PASSWORD']
+            }
+        }
+    }
+
     buildTypes {
         release {
             runProguard false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+            signingConfig signingConfigs.release
         }
     }
 }
